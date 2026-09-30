@@ -1,0 +1,21 @@
+# Normaliza los finales de linea en el repositorio.
+# Los archivos se guardan con LF y se convierten al finalizar en Windows,
+# de modo que el diff entre maquinas distintas no genera ruido.
+
+* text=auto eol=lf
+
+# Archivos que Git debe tratar como binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.vsix binary
+*.woff binary
+*.woff2 binary
+
+# Los archivos de bloqueo de pnpm deben conservarse tal cual
+pnpm-lock.yaml -text

@@ -1,0 +1,280 @@
+/* =========================================================
+   DocuTrust · Animation toolkit (global)
+   Clases reutilizables de animación usadas en todo el frontend.
+   La mayoria de entradas usan fill-mode `backwards` para que,
+   al terminar, el elemento vuelva a sus estilos naturales y no
+   bloquee transiciones hover (p.ej. translateY al pasar el mouse).
+   ========================================================= */
+
+/* --- Entrada de pagina (aplicada por +layout.svelte en cada ruta) --- */
+.anim-page {
+  animation: pageIn 0.45s cubic-bezier(0.22, 0.9, 0.34, 1) both;
+}
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Entradas puntuales --- */
+.anim-rise {
+  animation: rise 0.55s cubic-bezier(0.22, 0.9, 0.34, 1) backwards;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-pop {
+  animation: popIn 0.45s cubic-bezier(0.34, 1.45, 0.64, 1) backwards;
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.anim-fade {
+  animation: fadeIn 0.5s ease backwards;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.anim-slide {
+  animation: slideDown 0.38s cubic-bezier(0.22, 0.9, 0.34, 1) backwards;
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-shake {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-3px);
+  }
+  40%,
+  60% {
+    transform: translateX(3px);
+  }
+}
+
+/* --- Utilidades de retardo --- */
+.d1 { animation-delay: 0.06s; }
+.d2 { animation-delay: 0.12s; }
+.d3 { animation-delay: 0.18s; }
+.d4 { animation-delay: 0.24s; }
+.d5 { animation-delay: 0.3s; }
+.d6 { animation-delay: 0.36s; }
+
+/* --- Grupos escalonados (los hijos entran uno a uno, hasta 12) --- */
+.stagger > * {
+  animation: rise 0.5s cubic-bezier(0.22, 0.9, 0.34, 1) backwards;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.stagger > *:nth-child(2) { animation-delay: 0.09s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.21s; }
+.stagger > *:nth-child(5) { animation-delay: 0.27s; }
+.stagger > *:nth-child(6) { animation-delay: 0.33s; }
+.stagger > *:nth-child(7) { animation-delay: 0.39s; }
+.stagger > *:nth-child(8) { animation-delay: 0.45s; }
+.stagger > *:nth-child(9) { animation-delay: 0.51s; }
+.stagger > *:nth-child(10) { animation-delay: 0.57s; }
+.stagger > *:nth-child(11) { animation-delay: 0.63s; }
+.stagger > *:nth-child(12) { animation-delay: 0.69s; }
+
+/* --- Movimiento ambiente infinito --- */
+.anim-float {
+  animation: floatY 5.5s ease-in-out infinite;
+}
+.anim-float-alt {
+  animation: floatY 6.5s ease-in-out 0.8s infinite;
+}
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.anim-glow {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.045);
+  }
+}
+
+/* --- Anillos pulsantes (indicadores de estado) --- */
+.anim-ring {
+  animation: ringPulse 2.2s ease-out infinite;
+}
+@keyframes ringPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(79, 70, 229, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+  }
+}
+.anim-ring-green {
+  animation: ringPulseGreen 2.2s ease-out infinite;
+}
+@keyframes ringPulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(5, 150, 105, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+  }
+}
+.anim-ring-red {
+  animation: ringPulseRed 2.2s ease-out infinite;
+}
+@keyframes ringPulseRed {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+/* --- Skeleton (carga) --- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: #e8edf4;
+  border-radius: 8px;
+  color: transparent;
+  user-select: none;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: shimmer 1.3s infinite;
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* --- Relleno de progreso --- */
+.anim-grow {
+  transform-origin: left;
+  animation: growW 0.9s cubic-bezier(0.22, 0.9, 0.34, 1) both;
+}
+@keyframes growW {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* --- Micro-interaccion de botones --- */
+.btn-anim {
+  transition: transform 0.18s cubic-bezier(0.22, 0.9, 0.34, 1),
+    box-shadow 0.18s, background 0.18s, border-color 0.18s, color 0.18s,
+    opacity 0.18s;
+}
+.btn-anim:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* --- Spinner en botones en estado de carga --- */
+.is-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  pointer-events: none;
+}
+.is-loading::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spinFast 0.7s linear infinite;
+  flex: none;
+}
+@keyframes spinFast {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Respeto a usuarios con movimiento reducido --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

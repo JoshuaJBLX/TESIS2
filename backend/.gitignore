@@ -1,0 +1,39 @@
+# Dependencias
+node_modules/
+
+# Compilacion
+dist/
+build/
+coverage/
+
+# Entorno: nunca subir el archivo real, solo el ejemplo
+.env
+.env.*
+!.env.example
+
+# Base de datos local (sql.js genera el archivo en tiempo de ejecucion)
+data/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Archivos subidos por los usuarios
+uploads/
+
+# Pruebas
+.vitest-temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Registros
+*.log
+npm-debug.log*
+pnpm-debug.log*
