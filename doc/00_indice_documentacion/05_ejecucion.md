@@ -1,6 +1,6 @@
 # Guía de Ejecución — DocuTrust
 
-> Acceso rápido para poner el sistema en marcha. Para la **instalación desde cero** (Node.js, pnpm, dependencias, `.env`) consulta primero [`05_instalacion.md`](./05_instalacion.md).
+> Acceso rápido para poner el sistema en marcha. Para la **instalación desde cero** (Node.js, pnpm, dependencias, `.env`) consulta primero [`04_instalacion.md`](./04_instalacion.md).
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Sistema de Gestión Documental con Firma Digital y Trazabilidad**
 > Documento de referencia con todas las funcionalidades del sistema, presentadas en cuadros de doble entrada.
-> Para la **instalación de dependencias y puesta en marcha** consulta [`05_instalacion.md`](./05_instalacion.md).
+> Para la **instalación de dependencias y puesta en marcha** consulta [`04_instalacion.md`](./04_instalacion.md).
 > Última actualización: revisión exhaustiva del código, suites de tests (98 backend + 17 frontend) en verde, verificación funcional por API y pase de diseño de las páginas colaborativas (descargas autenticadas, códigos de estado 403/404).
 
 ---

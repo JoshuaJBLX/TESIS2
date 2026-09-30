@@ -341,22 +341,22 @@ La documentación completa vive en la carpeta `doc/` de la raíz del repositorio
 organizada por fases del ciclo de vida. El punto de partida es el índice:
 
 ```text
-../doc/00/00_indice_documentacion.md
+../doc/00_indice_documentacion/00_indice_documentacion.md
 ```
 
 Los documentos más relevantes para quien modifica este frontend son:
 
 | Documento | Ruta |
 |-----------|------|
-| Índice general | [`00_indice_documentacion.md`](../doc/00/00_indice_documentacion.md) |
+| Índice general | [`00_indice_documentacion.md`](../doc/00_indice_documentacion/00_indice_documentacion.md) |
 | Guía técnica de operación | [`guia_tecnica.md`](../doc/05_mantenimiento_evaluacion/operacion/guia_tecnica.md) |
 | Manual de usuario | [`manual_usuario.md`](../doc/05_mantenimiento_evaluacion/operacion/manual_usuario.md) |
 | Arquitectura del sistema | [`arquitectura.md`](../doc/02_diseno_construccion/arquitectura/arquitectura.md) |
 | Análisis técnico | [`analisis_tecnico.md`](../doc/02_diseno_construccion/arquitectura/analisis_tecnico.md) |
 | Matriz de pruebas | [`matriz_pruebas.md`](../doc/02_diseno_construccion/pruebas_calidad/matriz_pruebas.md) |
 | Inventario de software | [`software_utilizado.md`](../doc/06_diagramas_y_software/software_utilizado.md) |
-| Guía de instalación del proyecto | [`05_instalacion.md`](../doc/00/05_instalacion.md) |
-| Guía de ejecución del proyecto | [`06_ejecucion.md`](../doc/00/06_ejecucion.md) |
+| Guía de instalación del proyecto | [`04_instalacion.md`](../doc/00_indice_documentacion/04_instalacion.md) |
+| Guía de ejecución del proyecto | [`05_ejecucion.md`](../doc/00_indice_documentacion/05_ejecucion.md) |
 
 ---
 

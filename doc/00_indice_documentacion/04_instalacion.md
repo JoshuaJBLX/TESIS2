@@ -56,9 +56,9 @@ Tesis2/
 ├── frontend/         → SvelteKit + Svelte 5 + Vite (puerto 5173)
 │   ├── package.json  → dependencias propias (proyecto pnpm independiente)
 │   └── pnpm-lock.yaml
-├── 05_instalacion.md    → este documento
-├── 08_progreso_2_0.md    → estado del proyecto y verificación
-└── 03_funcionalidades.md
+├── 04_instalacion.md    → este documento
+├── 07_progreso_2_0.md    → estado del proyecto y verificación
+└── 02_funcionalidades.md
 ```
 
 > **Importante:** cada proyecto (backend y frontend) se instala por separado. Ejecuta los comandos dentro de cada carpeta.

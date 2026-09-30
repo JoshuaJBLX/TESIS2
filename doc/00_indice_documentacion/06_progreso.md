@@ -36,7 +36,7 @@ Tener backend funcional con autenticación y frontend básico.
 
 ```
 tesis-documental/
-├── 02_planificacion.md
+├── 01_planificacion.md
 ├── README.md
 ├── .gitignore
 ├── backend/

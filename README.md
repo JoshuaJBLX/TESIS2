@@ -127,4 +127,4 @@ pnpm db:seed
 
 ## Documentación
 
-- [02_planificacion.md](doc/00/02_planificacion.md) — Planificación exhaustiva del proyecto
+- [01_planificacion.md](doc/00_indice_documentacion/01_planificacion.md) — Planificación exhaustiva del proyecto

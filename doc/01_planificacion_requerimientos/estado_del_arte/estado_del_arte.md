@@ -147,7 +147,7 @@ por una TSA. La firma que produce el sistema es criptográficamente sólida y
 válida **dentro del perímetro del propio sistema**, pero carece del valor legal
 atribuido a una firma electrónica sobre documento electrónico.
 
-Esta limitación se declara de forma explícita en el `../../../README.md` de `doc/00/` y en
+Esta limitación se declara de forma explícita en el `../../../README.md` de `doc/00_indice_documentacion/` y en
 la interfaz de usuario, y se maneja como riesgo crítico `RK-01` en
 [`metodologia_general.md`](../metodologia/metodologia_general.md).
 

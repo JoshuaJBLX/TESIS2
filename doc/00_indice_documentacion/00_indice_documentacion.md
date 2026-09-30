@@ -64,18 +64,18 @@
 
 ## 2. Organización por Fases del Ciclo de Vida
 
-### 2.0. `00/` — Portada e Índice General
+### 2.0. `00_indice_documentacion/` — Portada e Índice General
 
 | Documento | Aporta |
 |-----------|--------|
 | [`00_indice_documentacion.md`](00_indice_documentacion.md) | Este índice: convenciones, inventario, orden de lectura, estadísticas y estado de verificación |
-| [`02_planificacion.md`](02_planificacion.md) | Planificación exhaustiva: fases, cronograma, riesgos, roles y presupuesto |
-| [`03_funcionalidades.md`](03_funcionalidades.md) | Funcionalidades descritas con cuadros de doble entrada, precondiciones y postcondiciones |
-| [`04_analisis_detallado.md`](04_analisis_detallado.md) | Análisis funcional y de diseño: casos de uso, RF/RNF, arquitectura y base de datos |
-| [`05_instalacion.md`](05_instalacion.md) | Guía de instalación desde cero: requisitos, dependencias, `.env`, base de datos y solución de problemas |
-| [`06_ejecucion.md`](06_ejecucion.md) | Acceso rápido para poner el sistema en marcha y ejecutar las pruebas |
-| [`07_progreso.md`](07_progreso.md) | Bitácora de progreso v1 (conservada como registro histórico) |
-| [`08_progreso_2_0.md`](08_progreso_2_0.md) | Bitácora de progreso v2: estado verificado, correcciones aplicadas y trabajo pendiente |
+| [`01_planificacion.md`](01_planificacion.md) | Planificación exhaustiva: fases, cronograma, riesgos, roles y presupuesto |
+| [`02_funcionalidades.md`](02_funcionalidades.md) | Funcionalidades descritas con cuadros de doble entrada, precondiciones y postcondiciones |
+| [`03_analisis_detallado.md`](03_analisis_detallado.md) | Análisis funcional y de diseño: casos de uso, RF/RNF, arquitectura y base de datos |
+| [`04_instalacion.md`](04_instalacion.md) | Guía de instalación desde cero: requisitos, dependencias, `.env`, base de datos y solución de problemas |
+| [`05_ejecucion.md`](05_ejecucion.md) | Acceso rápido para poner el sistema en marcha y ejecutar las pruebas |
+| [`06_progreso.md`](06_progreso.md) | Bitácora de progreso v1 (conservada como registro histórico) |
+| [`07_progreso_2_0.md`](07_progreso_2_0.md) | Bitácora de progreso v2: estado verificado, correcciones aplicadas y trabajo pendiente |
 
 ### 2.1. Fase 1 — Planificación y Requerimientos
 
@@ -156,18 +156,18 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 
 ## 4. Inventario Completo de Documentos
 
-### 4.1. `00/` — Portada e índice General (8)
+### 4.1. `00_indice_documentacion/` — Portada e índice General (8)
 
 | Documento | Líneas | Secciones |
 |-----------|:------:|:----------:|
 | [`00_indice_documentacion.md`](00_indice_documentacion.md) | 372 | 9 |
-| [`02_planificacion.md`](02_planificacion.md) | 330 | 10 |
-| [`03_funcionalidades.md`](03_funcionalidades.md) | 270 | 11 |
-| [`04_analisis_detallado.md`](04_analisis_detallado.md) | 1 022 | 12 |
-| [`05_instalacion.md`](05_instalacion.md) | 298 | 10 |
-| [`06_ejecucion.md`](06_ejecucion.md) | 106 | 7 |
-| [`07_progreso.md`](07_progreso.md) | 255 | 9 |
-| [`08_progreso_2_0.md`](08_progreso_2_0.md) | 295 | 10 |
+| [`01_planificacion.md`](01_planificacion.md) | 330 | 10 |
+| [`02_funcionalidades.md`](02_funcionalidades.md) | 270 | 11 |
+| [`03_analisis_detallado.md`](03_analisis_detallado.md) | 1 022 | 12 |
+| [`04_instalacion.md`](04_instalacion.md) | 298 | 10 |
+| [`05_ejecucion.md`](05_ejecucion.md) | 106 | 7 |
+| [`06_progreso.md`](06_progreso.md) | 255 | 9 |
+| [`07_progreso_2_0.md`](07_progreso_2_0.md) | 295 | 10 |
 
 ### 4.2. Fase 1 — Planificación y Requerimientos (10)
 
@@ -271,7 +271,7 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 
 | # | Documento | Motivo |
 |:-:|-----------|--------|
-| 1 | [`04_analisis_detallado.md`](04_analisis_detallado.md) | Análisis funcional y de diseño consolidado |
+| 1 | [`03_analisis_detallado.md`](03_analisis_detallado.md) | Análisis funcional y de diseño consolidado |
 | 2 | [`arquitectura.md`](../02_diseno_construccion/arquitectura/arquitectura.md) | Estructura y decisiones de diseño |
 | 3 | [`analisis_tecnico.md`](../02_diseno_construccion/arquitectura/analisis_tecnico.md) | Alternativas evaluadas y su justificación |
 | 4 | [`modelo_datos.md`](../02_diseno_construccion/arquitectura/modelo_datos.md) | Esquema y relaciones |
@@ -282,7 +282,7 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 
 ### 5.3. Para el recorrido completo (8 horas)
 
-Índice → [`README.md`](../../README.md) (portada del proyecto) → `00/` completa (planificación, funcionalidades, análisis, instalación, ejecución y progreso) → Fase 1 completa → Fase 2 completa → Fases 3 y 4 → Fase 5 → Fase 6.
+Índice → [`README.md`](../../README.md) (portada del proyecto) → `00_indice_documentacion/` completa (planificación, funcionalidades, análisis, instalación, ejecución y progreso) → Fase 1 completa → Fase 2 completa → Fases 3 y 4 → Fase 5 → Fase 6.
 
 Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 
@@ -312,7 +312,7 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 | 3 y 4 — Desarrollo e Implementación | 3 | 950 | 4.7 % |
 | 5 — Mantenimiento y Evaluación | 8 | 3 044 | 15.0 % |
 | 6 — Diagramas y Software | 9 | 2 789 | 13.8 % |
-| `00/` (índice general y documentos de proyecto) | 8 | 2 948 | 14.6 % |
+| `00_indice_documentacion/` (índice general y documentos de proyecto) | 8 | 2 948 | 14.6 % |
 | **Total** | **61** | **20 232** | **100 %** |
 
 ---

@@ -129,12 +129,12 @@
 ```
 tesis-documental/
 ├── README.md
-├── 05_instalacion.md       ← guía de instalación de dependencias (nuevo)
-├── 06_ejecucion.md         ← acceso rápido a pnpm dev
-├── 02_planificacion.md
-├── 07_progreso.md          ← v1 (desactualizada)
-├── 08_progreso_2_0.md       ← v2 (este documento)
-├── 03_funcionalidades.md   ← cuadros de doble entrada actualizados
+├── 04_instalacion.md       ← guía de instalación de dependencias (nuevo)
+├── 05_ejecucion.md         ← acceso rápido a pnpm dev
+├── 01_planificacion.md
+├── 06_progreso.md          ← v1 (desactualizada)
+├── 07_progreso_2_0.md       ← v2 (este documento)
+├── 02_funcionalidades.md   ← cuadros de doble entrada actualizados
 ├── backend/
 │   ├── .env / .env.example
 │   ├── src/
@@ -251,7 +251,7 @@ Los endpoints `PATCH /visibility` y `POST /proposals/:pid/reject` llamaban a mé
 
 ## 8. Cómo Ejecutar
 
-> **Instalación desde cero (nuevo):** sigue la guía paso a paso en [`05_instalacion.md`](./05_instalacion.md) (requisitos, dependencias, `.env`, BD, tests y solución de problemas).
+> **Instalación desde cero (nuevo):** sigue la guía paso a paso en [`04_instalacion.md`](./04_instalacion.md) (requisitos, dependencias, `.env`, BD, tests y solución de problemas).
 
 ```bash
 # Terminal 1 — Backend (puerto 3000)
