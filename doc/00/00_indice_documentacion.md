@@ -1,8 +1,8 @@
 # Índice de Documentación — SGD-FD
 
 **Proyecto:** Sistema de Gestión Documental con Firma Digital y Trazabilidad
-**Documentos indexados:** 62
-**Extensión total:** 20 366 líneas · 981 KB
+**Documentos indexados:** 61
+**Extensión total:** 20 232 líneas · 979 KB
 
 ---
 
@@ -69,7 +69,6 @@
 | Documento | Aporta |
 |-----------|--------|
 | [`00_indice_documentacion.md`](00_indice_documentacion.md) | Este índice: convenciones, inventario, orden de lectura, estadísticas y estado de verificación |
-| [`01_readme.md`](01_readme.md) | Portada del proyecto: problema, solución, stack, estructura y guía rápida |
 | [`02_planificacion.md`](02_planificacion.md) | Planificación exhaustiva: fases, cronograma, riesgos, roles y presupuesto |
 | [`03_funcionalidades.md`](03_funcionalidades.md) | Funcionalidades descritas con cuadros de doble entrada, precondiciones y postcondiciones |
 | [`04_analisis_detallado.md`](04_analisis_detallado.md) | Análisis funcional y de diseño: casos de uso, RF/RNF, arquitectura y base de datos |
@@ -157,12 +156,11 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 
 ## 4. Inventario Completo de Documentos
 
-### 4.1. `00/` — Portada e índice General (9)
+### 4.1. `00/` — Portada e índice General (8)
 
 | Documento | Líneas | Secciones |
 |-----------|:------:|:----------:|
-| [`00_indice_documentacion.md`](00_indice_documentacion.md) | 376 | 9 |
-| [`01_readme.md`](01_readme.md) | 130 | 8 |
+| [`00_indice_documentacion.md`](00_indice_documentacion.md) | 372 | 9 |
 | [`02_planificacion.md`](02_planificacion.md) | 330 | 10 |
 | [`03_funcionalidades.md`](03_funcionalidades.md) | 270 | 11 |
 | [`04_analisis_detallado.md`](04_analisis_detallado.md) | 1 022 | 12 |
@@ -265,28 +263,26 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 | # | Documento | Motivo |
 |:-:|-----------|--------|
 | 1 | [`evaluacion.md`](../05_mantenimiento_evaluacion/evaluacion.md) | Resumen ejecutivo, resultados y limitaciones |
-| 2 | [`01_readme.md`](01_readme.md) | Portada del proyecto: problema, solución y stack |
-| 3 | [`manual_usuario.md`](../05_mantenimiento_evaluacion/operacion/manual_usuario.md) | Ver el producto en funcionamiento |
-| 4 | [`diagrama_casos_uso.md`](../06_diagramas_y_software/diagrama_casos_uso.md) | Entender el alcance funcional |
-| 5 | [`seguridad.md`](../05_mantenimiento_evaluacion/seguridad/seguridad.md) | Evaluar los riesgos aceptados |
+| 2 | [`manual_usuario.md`](../05_mantenimiento_evaluacion/operacion/manual_usuario.md) | Ver el producto en funcionamiento |
+| 3 | [`diagrama_casos_uso.md`](../06_diagramas_y_software/diagrama_casos_uso.md) | Entender el alcance funcional |
+| 4 | [`seguridad.md`](../05_mantenimiento_evaluacion/seguridad/seguridad.md) | Evaluar los riesgos aceptados |
 
 ### 5.2. Para la revisión técnica (3 horas)
 
 | # | Documento | Motivo |
 |:-:|-----------|--------|
-| 1 | [`01_readme.md`](01_readme.md) | Portada del proyecto: problema, solución y stack |
-| 2 | [`04_analisis_detallado.md`](04_analisis_detallado.md) | Análisis funcional y de diseño consolidado |
-| 3 | [`arquitectura.md`](../02_diseno_construccion/arquitectura/arquitectura.md) | Estructura y decisiones de diseño |
-| 4 | [`analisis_tecnico.md`](../02_diseno_construccion/arquitectura/analisis_tecnico.md) | Alternativas evaluadas y su justificación |
-| 5 | [`modelo_datos.md`](../02_diseno_construccion/arquitectura/modelo_datos.md) | Esquema y relaciones |
-| 6 | [`matriz_pruebas.md`](../02_diseno_construccion/pruebas_calidad/matriz_pruebas.md) | Qué se verifica y cómo |
-| 7 | [`matriz_trazabilidad.md`](../02_diseno_construccion/pruebas_calidad/matriz_trazabilidad.md) | Cobertura de los 27 RF y 44 RNF |
-| 8 | [`guia_tecnica.md`](../05_mantenimiento_evaluacion/operacion/guia_tecnica.md) | Referencia para mantener el código |
-| 9 | [`software_utilizado.md`](../06_diagramas_y_software/software_utilizado.md) | Dependencias y licencias |
+| 1 | [`04_analisis_detallado.md`](04_analisis_detallado.md) | Análisis funcional y de diseño consolidado |
+| 2 | [`arquitectura.md`](../02_diseno_construccion/arquitectura/arquitectura.md) | Estructura y decisiones de diseño |
+| 3 | [`analisis_tecnico.md`](../02_diseno_construccion/arquitectura/analisis_tecnico.md) | Alternativas evaluadas y su justificación |
+| 4 | [`modelo_datos.md`](../02_diseno_construccion/arquitectura/modelo_datos.md) | Esquema y relaciones |
+| 5 | [`matriz_pruebas.md`](../02_diseno_construccion/pruebas_calidad/matriz_pruebas.md) | Qué se verifica y cómo |
+| 6 | [`matriz_trazabilidad.md`](../02_diseno_construccion/pruebas_calidad/matriz_trazabilidad.md) | Cobertura de los 27 RF y 44 RNF |
+| 7 | [`guia_tecnica.md`](../05_mantenimiento_evaluacion/operacion/guia_tecnica.md) | Referencia para mantener el código |
+| 8 | [`software_utilizado.md`](../06_diagramas_y_software/software_utilizado.md) | Dependencias y licencias |
 
 ### 5.3. Para el recorrido completo (8 horas)
 
-Índice → `00/` completa (portada, planificación, funcionalidades, análisis, instalación, ejecución y progreso) → Fase 1 completa → Fase 2 completa → Fases 3 y 4 → Fase 5 → Fase 6.
+Índice → [`README.md`](../../README.md) (portada del proyecto) → `00/` completa (planificación, funcionalidades, análisis, instalación, ejecución y progreso) → Fase 1 completa → Fase 2 completa → Fases 3 y 4 → Fase 5 → Fase 6.
 
 Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 
@@ -296,13 +292,13 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 
 | Métrica | Valor |
 |---------|:-----:|
-| Documentos | 62 |
-| Líneas totales | 20 366 |
-| Extensión total | 981 KB |
+| Documentos | 61 |
+| Líneas totales | 20 232 |
+| Extensión total | 979 KB |
 | Secciones de primer nivel | 653 |
 | Carpetas con documentos | 18 |
 | Carpetas reservadas vacías | 2 |
-| Enlaces relativos internos | 456 |
+| Enlaces relativos internos | 464 |
 | Enlaces rotos | 0 |
 | Diagramas PlantUML | 8 documentos |
 | Tablas de datos | 6 366 líneas |
@@ -311,13 +307,13 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 
 | Fase | Documentos | Líneas | % del total |
 |------|:----------:|:------:|:-----------:|
-| 1 — Planificación y Requerimientos | 10 | 4 440 | 21.8 % |
-| 2 — Diseño y Construcción | 23 | 6 061 | 29.8 % |
+| 1 — Planificación y Requerimientos | 10 | 4 440 | 21.9 % |
+| 2 — Diseño y Construcción | 23 | 6 061 | 30.0 % |
 | 3 y 4 — Desarrollo e Implementación | 3 | 950 | 4.7 % |
-| 5 — Mantenimiento y Evaluación | 8 | 3 044 | 14.9 % |
-| 6 — Diagramas y Software | 9 | 2 789 | 13.7 % |
-| `00/` (portada, índice general y documentos de proyecto) | 9 | 3 082 | 15.1 % |
-| **Total** | **62** | **20 366** | **100 %** |
+| 5 — Mantenimiento y Evaluación | 8 | 3 044 | 15.0 % |
+| 6 — Diagramas y Software | 9 | 2 789 | 13.8 % |
+| `00/` (índice general y documentos de proyecto) | 8 | 2 948 | 14.6 % |
+| **Total** | **61** | **20 232** | **100 %** |
 
 ---
 
@@ -333,7 +329,7 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 | Tipos del frontend | `npx svelte-check` | **0 errores, 0 advertencias** |
 | Compilación del backend | `pnpm build` | Correcta |
 | Compilación del frontend | `pnpm build` | Correcta (aviso esperado de `adapter-auto`) |
-| Enlaces relativos | Auditoría automática | **0 rotos** de 456 |
+| Enlaces relativos | Auditoría automática | **0 rotos** de 464 |
 | Codificación UTF-8 | Auditoría automática | **0 caracteres de reemplazo, 0 CJK** |
 | Coherencia de identificadores | Auditoría automática | 24 CU en catálogo = 24 en diagrama |
 
@@ -364,7 +360,7 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 La firma producida por el SGD-FD es **criptográficamente válida dentro del
 sistema**, pero **no es firma electrónica certificada** conforme a la Ley
 N.° 27269: el proyecto no incorpora Autoridad de Certificación acreditada ni
-sello de tiempo (TSA). Un documento puede ser reported como `VALID` y, aun así,
+sello de tiempo (TSA). Un documento puede ser reportado como `VALID` y, aun así,
 carecer de validez legal de certificado.
 
 ---

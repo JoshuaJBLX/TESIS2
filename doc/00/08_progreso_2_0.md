@@ -128,7 +128,7 @@
 
 ```
 tesis-documental/
-├── 01_readme.md
+├── README.md
 ├── 05_instalacion.md       ← guía de instalación de dependencias (nuevo)
 ├── 06_ejecucion.md         ← acceso rápido a pnpm dev
 ├── 02_planificacion.md
@@ -150,8 +150,8 @@ tesis-documental/
 └── frontend/
     ├── src/lib/           api.ts, stores/auth.ts (+ api.test.ts, auth.test.ts)
     └── src/routes/        +layout, +page, login, register, dashboard,
-                           documents(+page), documents/[id](+page),
-                           u/[username](+page), v/[id](+page), verify, audit
+                           documents, documents/[id],
+                           u/[username], v/[id], verify, audit
 ```
 
 ---

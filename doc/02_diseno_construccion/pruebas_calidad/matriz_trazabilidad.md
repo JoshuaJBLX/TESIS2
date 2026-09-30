@@ -123,7 +123,7 @@ verificación asociada (100 %).**
 | US-010 | Código QR | `documents.api`: *sube un documento firmado y genera su QR* |
 | US-011 | Descarga de archivos | `documents.api`: *descarga el archivo de una versión con autenticación* |
 | US-012 | Confirmación de descarga legítima | `verify.api`: *verifica como VALID un archivo íntegro* |
-| US-013 | Conocimiento de los límites | Enunciado en `doc/00/01_readme.md` y en la interfaz |
+| US-013 | Conocimiento de los límites | Enunciado en `../../../README.md` y en la interfaz |
 | US-014 | Compartir | `documents.api`: *comparte un documento y lo expone en el perfil público* |
 | US-015 | Consulta pública sin cuenta | `documents.api`: *comparte un documento y lo expone en el perfil público* |
 | US-016 | Crear propuesta | `documents.api`: *gestiona propuestas: crear, rechazar y aceptar* |

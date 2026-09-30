@@ -33,8 +33,8 @@ Repositorio centralizado con firma digital criptográfica, trazabilidad inmutabl
 
 ```bash
 # Clonar repositorio
-git clone <url>
-cd tesis-documental
+git clone https://github.com/JoshuaJBLX/TESIS2.git
+cd Tesis2
 
 # Instalar backend
 cd backend
@@ -127,4 +127,4 @@ pnpm db:seed
 
 ## Documentación
 
-- [02_planificacion.md](./02_planificacion.md) — Planificación exhaustiva del proyecto
+- [02_planificacion.md](doc/00/02_planificacion.md) — Planificación exhaustiva del proyecto
