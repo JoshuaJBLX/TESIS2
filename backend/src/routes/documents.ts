@@ -41,10 +41,11 @@ function streamFile(res: Response, file: { filePath: string; fileName: string; m
   fs.createReadStream(absolutePath).pipe(res);
 }
 
-// GET /api/docs - List documents
+// GET /api/docs - List documents (with optional search query)
 router.get('/', authenticate, (req: AuthRequest, res: Response) => {
   try {
-    const documents = documentService.getDocuments(req.user!.id);
+    const search = typeof req.query.q === 'string' ? req.query.q : undefined;
+    const documents = documentService.getDocuments(req.user!.id, search);
     res.json({ success: true, data: documents });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -195,6 +196,36 @@ router.get('/:id/qr', authenticate, async (req: AuthRequest, res: Response) => {
       data: {
         qrCode: qrDataUrl,
         verificationUrl,
+        documentId: String(req.params.id)
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/docs/:id/share-qr - Get QR code for public share link
+router.get('/:id/share-qr', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const document = documentService.getDocument(String(req.params.id), req.user!.id);
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Documento no encontrado' });
+      return;
+    }
+
+    const frontendOrigin = process.env.FRONTEND_URL || `${req.protocol}://${req.get('host').replace(/:\d+$/, '')}:5173`;
+    const shareUrl = `${frontendOrigin}/v/${String(req.params.id)}`;
+
+    const qrDataUrl = await QRCode.toDataURL(shareUrl, {
+      width: 256,
+      margin: 2
+    });
+
+    res.json({
+      success: true,
+      data: {
+        qrCode: qrDataUrl,
+        shareUrl,
         documentId: String(req.params.id)
       }
     });

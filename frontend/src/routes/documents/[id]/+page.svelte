@@ -22,6 +22,9 @@
   let copied = $state(false);
   let downloading = $state('');
   let downloadError = $state('');
+  let shareQr = $state('');
+  let shareUrl = $state('');
+  let loadingQr = $state(false);
 
   let graph = $state<{
     width: number;
@@ -66,6 +69,9 @@
     if (p.success) proposals = p.data || [];
     buildGraph();
     buildOptions();
+    if (document?.is_public) {
+      await loadShareQr(id);
+    }
     loading = false;
   }
 
@@ -135,8 +141,24 @@
     const r = await api.setDocumentVisibility(id, !document.is_public);
     if (r.success && r.data) {
       document = { ...document, is_public: r.data.isPublic ? 1 : 0 };
+      if (document.is_public) {
+        await loadShareQr(id);
+      } else {
+        shareQr = '';
+        shareUrl = '';
+      }
     }
     toggling = false;
+  }
+
+  async function loadShareQr(id: string) {
+    loadingQr = true;
+    const r = await api.getDocumentShareQr(id);
+    if (r.success && r.data) {
+      shareQr = r.data.qrCode;
+      shareUrl = r.data.shareUrl;
+    }
+    loadingQr = false;
   }
 
   async function copyLink() {
@@ -285,6 +307,14 @@
         <div class="share-state"><span class="dot ok"></span> Documento público</div>
         <code class="share-link">http://localhost:5173/v/{document.id}</code>
         <button class="btn ghost tiny" onclick={copyLink}>{copied ? '¡Copiado!' : 'Copiar enlace'}</button>
+        {#if loadingQr}
+          <div class="qr-loading">Cargando QR...</div>
+        {:else if shareQr}
+          <div class="qr-container">
+            <img src={shareQr} alt="Código QR del documento" class="qr-image" />
+            <span class="qr-label">Escanea para ver</span>
+          </div>
+        {/if}
       </section>
     {/if}
 
@@ -570,6 +600,10 @@
   .share-bar { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 11px 15px; background: #ecfdf5; border: 1px solid #bbf7d0; border-radius: 12px; font-size: .8rem; flex-wrap: wrap; }
   .share-state { display: flex; align-items: center; gap: 7px; color: #047857; font-weight: 800; }
   .share-link { color: #065f46; background: #fff; padding: 6px 10px; border-radius: 7px; font-size: .74rem; flex: 1; min-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #bbf7d0; }
+  .qr-container { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #fff; padding: 8px; border-radius: 10px; border: 1px solid #bbf7d0; }
+  .qr-image { width: 80px; height: 80px; border-radius: 6px; }
+  .qr-label { font-size: .62rem; color: #047857; font-weight: 700; }
+  .qr-loading { font-size: .72rem; color: #047857; font-weight: 600; padding: 8px 12px; background: #fff; border-radius: 8px; border: 1px solid #bbf7d0; }
   .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
   .dot.ok { background: #059669; }
   .success { margin-top: 15px; padding: 13px 15px; background: #ecfdf5; color: #047857; border: 1px solid #bbf7d0; border-radius: 10px; font-size: .8rem; font-weight: 700; }

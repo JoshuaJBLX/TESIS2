@@ -316,8 +316,9 @@ class ApiClient {
   }
 
   // Documents
-  async getDocuments(): Promise<ApiResponse<Document[]>> {
-    return this.request<Document[]>('/docs');
+  async getDocuments(search?: string): Promise<ApiResponse<Document[]>> {
+    const query = search ? `?q=${encodeURIComponent(search)}` : '';
+    return this.request<Document[]>(`/docs${query}`);
   }
 
   async getDocument(id: string): Promise<ApiResponse<DocumentDetail>> {
@@ -326,6 +327,10 @@ class ApiClient {
 
   async getDocumentVersions(id: string): Promise<ApiResponse<DocumentVersion[]>> {
     return this.request<DocumentVersion[]>(`/docs/${id}/versions`);
+  }
+
+  async getDocumentShareQr(id: string): Promise<ApiResponse<{ qrCode: string; shareUrl: string; documentId: string }>> {
+    return this.request(`/docs/${id}/share-qr`);
   }
 
   async uploadDocument(

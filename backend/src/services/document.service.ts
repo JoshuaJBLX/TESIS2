@@ -379,16 +379,28 @@ export class DocumentService {
     return { documentId, isPublic: isPublic ? 1 : 0 };
   }
 
-  getDocuments(userId: string): any[] {
-    return queryAll(
-      `SELECT d.*, 
+  getDocuments(userId: string, search?: string): any[] {
+    const baseQuery = `SELECT d.*, 
         (SELECT MAX(version_number) FROM document_versions WHERE document_id = d.id) as current_version,
         u.username as owner_username
        FROM documents d
        JOIN users u ON d.owner_id = u.id
-       WHERE d.owner_id = ?
-       ORDER BY d.updated_at DESC`,
-      [userId]
+       WHERE d.owner_id = ?`;
+    
+    const params: any[] = [userId];
+    
+    if (search && search.trim()) {
+      const searchTerm = `%${search.trim()}%`;
+      return queryAll(
+        `${baseQuery} AND (d.title LIKE ? OR d.description LIKE ? OR u.username LIKE ?)
+         ORDER BY d.updated_at DESC`,
+        [userId, searchTerm, searchTerm, searchTerm]
+      );
+    }
+    
+    return queryAll(
+      `${baseQuery} ORDER BY d.updated_at DESC`,
+      params
     );
   }
 

@@ -17,6 +17,9 @@
   let uploadSuccess = $state<any>(null);
   let downloadingId = $state('');
   let downloadError = $state('');
+  let searchQuery = $state('');
+  let searchInput = $state('');
+  let searchDebounce: ReturnType<typeof setTimeout> | null = null;
 
   onMount(() => {
     auth.init();
@@ -37,11 +40,26 @@
 
   async function loadDocuments() {
     loading = true;
-    const result = await api.getDocuments();
+    const result = await api.getDocuments(searchQuery || undefined);
     if (result.success && result.data) {
       documents = result.data;
     }
     loading = false;
+  }
+
+  function handleSearchInput() {
+    if (searchDebounce) clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+      searchQuery = searchInput;
+      loadDocuments();
+    }, 300);
+  }
+
+  function clearSearch() {
+    searchInput = '';
+    searchQuery = '';
+    if (searchDebounce) clearTimeout(searchDebounce);
+    loadDocuments();
   }
 
   function handleFileChange(e: Event) {
@@ -108,6 +126,27 @@
       <button class="btn-secondary" onclick={() => uploadSuccess = null}>Cerrar</button>
     </div>
   {/if}
+
+  <div class="search-bar">
+    <div class="search-input-wrapper">
+      <span class="search-icon">&#128269;</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por titulo, descripcion o propietario..."
+        bind:value={searchInput}
+        oninput={handleSearchInput}
+      />
+      {#if searchInput}
+        <button class="search-clear" onclick={clearSearch} title="Limpiar búsqueda">&times;</button>
+      {/if}
+    </div>
+    {#if searchQuery}
+      <span class="search-results-info">
+        {documents.length} resultado{documents.length !== 1 ? 's' : ''} para "{searchQuery}"
+      </span>
+    {/if}
+  </div>
 
   {#if showUpload}
     <div class="upload-panel anim-slide">
@@ -252,6 +291,65 @@
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
+  }
+
+  .search-bar {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    font-size: 1rem;
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 2.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fbfdff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    border-radius: 4px;
+    transition: color 0.2s;
+  }
+
+  .search-clear:hover {
+    color: #4f46e5;
+  }
+
+  .search-results-info {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
   }
 
   .upload-panel, .success-panel {
