@@ -175,6 +175,7 @@
             <div class="tl-head">
               <span class="version">v{ver.version_number}</span>
               <span class="date">{formatDate(ver.upload_date)}</span>
+              <a class="vlink" href="/v/{doc.id}/v{ver.version_number}" title="Abrir solo la versión {ver.version_number}">Abrir ↗</a>
             </div>
             <div class="tl-body">
               <span class="file-badge">{ext(ver.file_name)}</span>
@@ -182,7 +183,7 @@
                 <h3>{ver.file_name}</h3>
                 <p>{(ver.file_size / 1024).toFixed(1)} KB · Firmado por {ver.signer_username || '—'}{ver.coauthor_username ? ' + ' + ver.coauthor_username : ''}</p>
                 {#if ver.change_description}
-                  <p class="change">¿ {ver.change_description}</p>
+                  <p class="change">{ver.change_description}</p>
                 {/if}
               </div>
               <a class="btn btn-download" href={api.downloadDocumentUrl(doc.id, ver.id)} download>⭳</a>
@@ -262,6 +263,8 @@
   .tl-card { flex: 1; margin-bottom: 12px; background: #fff; border: 1px solid #e1e7f0; border-radius: 13px; padding: 15px 17px; box-shadow: 0 1px 3px rgba(30,41,59,.05); }
   .tl-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .version { color: #4338ca; background: #e0e7ff; padding: 4px 10px; border-radius: 6px; font-weight: 850; font-size: .76rem; }
+  .vlink { color: #4f46e5; font-weight: 750; font-size: .7rem; text-decoration: none; white-space: nowrap; }
+  .vlink:hover { text-decoration: underline; }
   .date { color: #94a3b8; font-size: .7rem; }
   .tl-body { display: flex; align-items: center; gap: 13px; }
   .file-badge { background: #eef2ff; color: #4338ca; font-size: .66rem; font-weight: 900; letter-spacing: .04em; padding: 7px 9px; border-radius: 8px; flex-shrink: 0; }

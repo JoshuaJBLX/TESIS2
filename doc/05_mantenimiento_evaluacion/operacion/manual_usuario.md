@@ -121,7 +121,8 @@ Si la contraseña se olvida:
 | `/dashboard` | «Hola, {nombre de usuario}» | Con sesión | Resumen y acceso rápido |
 | `/documents` | «Mis Documentos» | Con sesión | Listado de documentos propios |
 | `/documents/[id]` | Título del documento | Propietario | Detalle, versiones, código QR y coautoría |
-| `/v/[id]` | Título del documento | Público, si el documento es público | Vista pública del documento |
+| `/v/[id]` | Título del documento | Público, si el documento es público | Vista pública del documento con su historial |
+| `/v/[id]/[version]` | Título del documento + «(V2 · motivo del cambio)» | Público, si el documento es público | Vista pública de **una sola versión** |
 | `/verify` | «Comprueba la autenticidad de un documento.» | Público | Verificación sin cuenta |
 | `/u/[username]` | Nombre completo o nombre de usuario | Público | Perfil público del firmante |
 | `/audit` | «Bitácora de auditoría» | Solo administradores | Auditoría y cadena de integridad |
@@ -228,6 +229,8 @@ En el SGD-FD, **un documento nunca nace público**. Todo documento se crea en es
 
 **Paso 2.** Seleccione `público` o `privado` y confirme.
 
+**Qué ve el usuario en pantalla.** Mientras el documento es público, el detalle muestra una barra de compartir con la dirección pública (`https://<origen>/v/<id>`, tomada del origen real de la página, no de una dirección fija), el botón **«Copiar enlace»** y el código QR. Al pulsar «Copiar enlace», la dirección queda en el portapapeles y el botón confirma con «¡Copiado!».
+
 ### 5.3. Efecto del compartido
 
 Es importante comprender qué ocurre y qué **no** ocurre al compartir:
@@ -235,7 +238,7 @@ Es importante comprender qué ocurre y qué **no** ocurre al compartir:
 | Efecto | Detalle |
 | --- | --- |
 | Cambia la visibilidad | El documento pasa a ser consultable por terceros |
-| Permite la vista pública | Se habilita la ruta `/v/[id]` |
+| Permite la vista pública | Se habilita la ruta `/v/[id]` y, con ella, la de cada versión `/v/[id]/[version]` |
 | Permite la descarga sin sesión | Cualquier persona puede obtener el archivo |
 | **No crea una versión nueva** | La versión y su firma permanecen intactas |
 | **No altera la huella** | El contenido firmado es el mismo antes y después |
@@ -247,7 +250,11 @@ Compartir es, por tanto, un cambio de **permiso de lectura**, no una alteración
 
 - **Ruta:** `/v/[id]` — Título en pantalla: el título del documento.
 
-Esta pantalla es la que ve un destinatario sin cuenta. Presenta el título, la versión vigente, el firmante, la fecha de firma, la huella SHA-256 y el código QR. Desde aquí, el destinatario puede ir a la página `/verify` para validar el archivo que tiene en su poder.
+Esta pantalla es la que ve un destinatario sin cuenta. Presenta la cabecera con el título, la descripción, el propietario, la versión vigente y los coautores, junto con el botón para descargar la versión actual. Debajo aparece el **historial público de versiones**, que lista cada versión con su número, fecha, archivo, tamaño, firmantes y el motivo del cambio.
+
+Cada entrada del historial incluye el enlace **«Abrir ↗»**, que conduce a `/v/[id]/[version]`: una vista que muestra **únicamente esa versión**, con un encabezado del tipo `Manual Colaborativo (V2 · Agrego el capitulo C de reportes)`, la huella SHA-256, el algoritmo de firma, la fecha de registro, quién la subió y un botón de descarga propio, más un enlace para volver al historial completo. **Ese es el enlace que conviene compartir cuando se quiere remitir exactamente una versión concreta**, ya que quien lo abra no verá las demás.
+
+Si el visitante tiene sesión y no es el propietario, la misma pantalla ofrece el formulario para enviar una propuesta firmada.
 
 ## 6. Coautoría
 
@@ -378,7 +385,7 @@ Porque la verificación no compara la apariencia, sino el contenido exacto. Un c
 No. El estado `MANIPULATED` informa que el contenido cambió y en qué versión dejó de coincidir, pero no identifica al autor material de la alteración. Esa investigación es un acto posterior, ajeno al alcance de la herramienta.
 
 **8. ¿Puedo verificar un documento sin registrarme?**
-Sí. La página `/verify` es pública precisamente para eso. También son públicas la vista `/v/[id]` de todo documento compartido y el perfil `/u/[username]`.
+Sí. La página `/verify` es pública precisamente para eso. También son públicas la vista `/v/[id]` de todo documento compartido, la vista de cada versión `/v/[id]/[version]` y el perfil `/u/[username]`.
 
 **9. ¿Quién puede crear una propuesta de coautoría?**
 Cualquier usuario registrado, pero solo sobre documentos **públicos**. La propuesta se firma con la clave del coautor, y el propietario decide si la acepta o la rechaza.
@@ -401,6 +408,7 @@ La sesión se sostiene mediante un token con vigencia limitada. Puede renovarse 
 | Al firmar, el sistema rechaza la operación | La contraseña ingresada para firmar no coincide | Verifique la contraseña; sin ella no se genera la firma ni la versión |
 | El documento cargado no aparece en el listado | La creación no llegó a completarse | Repita la carga desde `/documents`; la versión 1 se crea en una única operación |
 | La vista `/v/[id]` muestra un error de acceso | El documento es privado | Solicite al propietario que lo comparta; la vista pública solo funciona con documentos públicos |
+| Una dirección `/v/<id>/v2` no abre | La versión indicada no existe en ese documento | Revise el número de versión en el historial público de `/v/[id]`; si el enlace se copió a mano, confirme que va precedido de `v` en minúscula |
 | La descarga de un documento privado es rechazada | El usuario no es el propietario | Inicie sesión con la cuenta propietaria |
 | El código QR no se genera | El identificador del documento no es válido | Verifique la ruta y recargue la página de detalle |
 | La comparación no muestra diferencias | Las dos versiones son equivalentes | Elija versiones distintas en los selectores de versión base y destino |

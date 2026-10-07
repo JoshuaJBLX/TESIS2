@@ -14,7 +14,6 @@
   let uploadPassword = $state('');
   let uploading = $state(false);
   let uploadError = $state('');
-  let uploadSuccess = $state<any>(null);
   let downloadingId = $state('');
   let downloadError = $state('');
   let searchQuery = $state('');
@@ -75,7 +74,6 @@
 
     uploading = true;
     uploadError = '';
-    uploadSuccess = null;
 
     const result = await api.uploadDocument(
       uploadFile,
@@ -86,7 +84,6 @@
     );
 
     if (result.success && result.data) {
-      uploadSuccess = result.data;
       showUpload = false;
       uploadFile = null;
       uploadTitle = '';
@@ -113,19 +110,6 @@
       {showUpload ? 'Cancelar' : '+ Subir Documento'}
     </button>
   </div>
-
-  {#if uploadSuccess}
-    <div class="success-panel anim-pop">
-      <h3>Documento subido exitosamente</h3>
-      <div class="upload-result">
-        <p><strong>Hash:</strong> <code>{uploadSuccess.contentHash}</code></p>
-        <p><strong>Firma:</strong> {uploadSuccess.signature.algorithm}</p>
-        <img src={uploadSuccess.qrCode} alt="QR Code" class="qr-preview" />
-        <p><a href={uploadSuccess.verificationUrl} target="_blank">{uploadSuccess.verificationUrl}</a></p>
-      </div>
-      <button class="btn-secondary" onclick={() => uploadSuccess = null}>Cerrar</button>
-    </div>
-  {/if}
 
   <div class="search-bar">
     <div class="search-input-wrapper">
@@ -284,15 +268,6 @@
     cursor: not-allowed;
   }
 
-  .btn-secondary {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
   .search-bar {
     margin-bottom: 1.5rem;
   }
@@ -352,7 +327,7 @@
     color: #6b7280;
   }
 
-  .upload-panel, .success-panel {
+  .upload-panel {
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
@@ -572,23 +547,5 @@
   .doc-arrow {
     font-size: 1.5rem;
     color: #ccc;
-  }
-
-  .upload-result {
-    margin: 1rem 0;
-  }
-
-  .upload-result code {
-    background: #f5f5f5;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    word-break: break-all;
-  }
-
-  .qr-preview {
-    margin: 1rem 0;
-    width: 128px;
-    height: 128px;
   }
 </style>

@@ -245,7 +245,10 @@ principal, escenarios alternos y requisitos asociados.
 12. El sistema inserta la firma de la versión 1.
 13. El sistema genera el QR de verificación.
 14. El sistema registra `DOCUMENT_UPLOAD`.
-15. El sistema muestra la confirmación con el QR, la URL de verificación y el hash.
+15. El documento aparece de inmediato en el listado, marcado como **privado**.
+    El QR y el enlace público no se muestran aquí: aparecen en el detalle
+    `/documents/[id]` (barra de compartir) cuando el propietario decide
+    compartir el documento.
 
 **Flujos alternos**
 

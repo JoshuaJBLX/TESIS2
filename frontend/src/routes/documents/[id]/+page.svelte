@@ -163,7 +163,7 @@
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(`http://localhost:5173/v/${$page.params.id}`);
+      await navigator.clipboard.writeText(`${$page.url.origin}/v/${$page.params.id}`);
       copied = true;
       setTimeout(() => (copied = false), 2000);
     } catch {
@@ -305,7 +305,7 @@
     {#if document.is_public}
       <section class="share-bar anim-slide">
         <div class="share-state"><span class="dot ok"></span> Documento público</div>
-        <code class="share-link">http://localhost:5173/v/{document.id}</code>
+        <code class="share-link">{$page.url.origin}/v/{document.id}</code>
         <button class="btn ghost tiny" onclick={copyLink}>{copied ? '¡Copiado!' : 'Copiar enlace'}</button>
         {#if loadingQr}
           <div class="qr-loading">Cargando QR...</div>
@@ -545,6 +545,7 @@
           <div class="version-top">
             <span class="version">v{ver.version_number}</span>
             <span class="date">{date(ver.upload_date)}</span>
+            <a class="vlink" href="/v/{document.id}/v{ver.version_number}" title="Enlace público de la versión {ver.version_number}">Abrir ↗</a>
           </div>
           <h3>{ver.file_name}</h3>
           <div class="version-meta">
@@ -554,7 +555,7 @@
           {#if ver.coauthor_username}
             <p class="coauthor">En coautoría con {ver.coauthor_username}</p>
           {/if}
-          {#if ver.change_description}<p class="change">¿ {ver.change_description}</p>{/if}
+          {#if ver.change_description}<p class="change">{ver.change_description}</p>{/if}
           <div class="hash">
             <div class="hash-info">
               <small>HASH SHA-256</small>
@@ -683,6 +684,8 @@
   .version-card { background: #fff; border: 1px solid #e1e7f0; border-radius: 13px; padding: 17px 18px; box-shadow: 0 1px 3px rgba(30,41,59,.05); }
   .version-top { display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: .71rem; }
   .version { color: #4338ca; background: #e0e7ff; padding: 5px 11px; border-radius: 6px; font-weight: 850; font-size: .78rem; }
+  .vlink { color: #4f46e5; font-weight: 750; font-size: .71rem; text-decoration: none; }
+  .vlink:hover { text-decoration: underline; }
   .version-card h3 { font-size: .92rem; color: #334155; margin: 13px 0 6px; }
   .version-meta { display: flex; align-items: center; gap: 12px; color: #64748b; font-size: .74rem; }
   .signer { display: inline-flex; align-items: center; gap: 6px; }

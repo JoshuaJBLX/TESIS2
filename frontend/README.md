@@ -143,7 +143,8 @@ frontend/
 │       ├── audit/              # bitácora de auditoría
 │       ├── verify/             # verificación de autenticidad
 │       ├── u/[username]/       # perfil público (sin autenticación)
-│       └── v/[id]/             # vista pública de documento
+│       ├── v/[id]/             # vista pública de documento
+│       └── v/[id]/[version]/   # vista pública de una versión puntual
 ├── static/robots.txt
 ├── .env.example
 ├── svelte.config.js
@@ -163,7 +164,8 @@ frontend/
 | `/register` | Público | Registro de usuario |
 | `/verify` | Público | Verificación de autenticidad de un documento |
 | `/u/[username]` | Público | Perfil público del usuario |
-| `/v/[id]` | Público | Vista pública de un documento |
+| `/v/[id]` | Público | Vista pública de un documento (historial y enlace «Abrir ↗» por versión) |
+| `/v/[id]/[version]` | Público | Vista pública de una versión puntual, con su enlace de descarga propio |
 | `/dashboard` | Requiere sesión | Panel principal |
 | `/documents` | Requiere sesión | Listado y gestión de documentos |
 | `/documents/[id]` | Requiere sesión | Detalle, versiones, QR y visibilidad |

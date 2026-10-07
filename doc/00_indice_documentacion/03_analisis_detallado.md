@@ -348,6 +348,7 @@ frontend/src/
     ├── documents/[id]/+page.svelte       → Detalle, versiones, propuestas, red SVG y comparador
     ├── u/[username]/+page.svelte         → Perfil público del usuario
     ├── v/[id]/+page.svelte               → Vista pública de documento + envío de propuestas
+    ├── v/[id]/[version]/+page.svelte     → Vista pública de una versión puntual (solo esa versión)
     ├── verify/+page.svelte               → Verificación pública
     └── audit/+page.svelte                → Auditoría (admin)
 ```

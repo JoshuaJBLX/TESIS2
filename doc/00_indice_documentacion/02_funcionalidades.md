@@ -76,6 +76,7 @@
 |---------------|--------------------|----------|-----------|
 | Compartir documento (público/privado) | `PATCH /api/docs/:id/visibility` | `/documents/[id]` (botón "Compartir") | El propietario marca un documento como público y copia el enlace |
 | Vista pública de documento | `GET /api/docs/:id/public` | `/v/[id]` | Cualquier visitante ve metadata + historial y descarga versiones |
+| Vista de una versión puntual | — (filtra en cliente el JSON de `GET /api/docs/:id/public` por `version_number`) | `/v/[id]/[version]` | Enlace directo a una versión concreta: solo esa versión, sus metadatos, su descarga y enlace al historial completo |
 | Descarga de archivo por versión | `GET /api/docs/:id/file?versionId=` | botones "Descargar" en lista y detalle | Solo si el doc es público o eres el propietario |
 | Descarga autenticada de privados | — | `downloadFileWithAuth` en `api.ts`: botones "⭳ Descargar" en `/documents`, `/documents/[id]` e historial | fetch + blob + reintento tras `401` (renueva con refreshToken) — resuelve que `<a download>` no envía `Authorization` |
 | Descarga de propuesta | `GET /api/docs/:id/proposals/:pid/file` | panel de propuestas | Propietario, proponente o cualquier visitante si el doc es público |
@@ -211,7 +212,8 @@
 | `/documents` | Lista + subir documentos | Sí | Listar, subir y firmar, descargar versión actual, ver estado público |
 | `/documents/[id]` | Detalle + versiones | Sí (propietario) | Nueva versión, descargar por versión, compartir (público/privado) + copiar enlace, panel de propuestas (aceptar/rechazar con contraseña), red de versiones y propuestas (SVG), comparador de artefactos |
 | `/u/[username]` | Perfil público de usuario | No | Ver documentos públicos, ir a cada documento, descargar versión actual |
-| `/v/[id]` | Vista pública de documento | No | Ver historial, descargar versiones y (si estás logueado y no eres propietario) enviar una propuesta firmada |
+| `/v/[id]` | Vista pública de documento | No | Ver historial completo, ir a cada versión (enlace «Abrir ↗»), descargar versiones y (si estás logueado y no eres propietario) enviar una propuesta firmada |
+| `/v/[id]/[version]` | Vista pública de **una versión** | No | Ver solo esa versión (`V2 · motivo de cambio`), su hash/algoritmo/fecha/firmante, descargarla y volver al historial completo |
 | `/verify` | Verificación pública | No | Verificar archivo, resultado QR |
 | `/audit` | Auditoría (admin) | Sí (admin) | Listar eventos, verificar cadena, filtros |
 

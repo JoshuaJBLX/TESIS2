@@ -274,10 +274,13 @@ Cada modulo se acepto cuando su prueba correspondiente paso:
 | D-1 | Middleware `optionalAuthenticate` registrado dos veces | `app.ts` | Se elimino el duplicado; se conservo `authenticateOptional` |
 | D-2 | `resolveApiBase()` devolvia el origen del puerto 5173 en desarrollo | `frontend/src/lib/api.ts` | Se elimino la rama; el valor por defecto es `http://localhost:3000/api` |
 | D-3 | Conteo de versiones devuelto como texto en lugar de numero | `document.service.ts` | Conversion numerica en el servicio |
+| D-4 | El enlace publico visible y el que copiaba el boton «Copiar enlace» estaban fijos a `http://localhost:5173` | `frontend/src/routes/documents/[id]/+page.svelte` | Se construyen con `$page.url.origin`, de modo que reflejan el origen real desde el que se sirve la interfaz |
+| D-5 | Tras subir un documento se mostraba un panel de confirmacion con una URL de verificacion que apuntaba al backend y no a la interfaz | `frontend/src/routes/documents/+page.svelte` | Se elimino el panel; el QR y el enlace publico permanecen en la barra de compartir del detalle |
 
-Cada defecto se detecto mediante pruebas, no mediante revision manual. El
-defecto latente identificado en `GET /api/verify/:documentId` permanece abierto
-y esta documentado en el proceso TO-BE 03.
+Los defectos D-1 a D-3 se detectaron mediante pruebas automatizadas; D-4 y D-5
+provienen de una revision manual de la interfaz. El defecto latente identificado
+en `GET /api/verify/:documentId` permanece abierto y esta documentado en el
+proceso TO-BE 03.
 
 ---
 
