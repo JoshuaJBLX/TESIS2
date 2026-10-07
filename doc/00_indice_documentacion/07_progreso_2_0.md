@@ -237,6 +237,12 @@ Los endpoints `PATCH /visibility` y `POST /proposals/:pid/reject` llamaban a mé
 6. **`MaxListenersExceededWarning` en tests**: `app.ts` registraba manejadores de `SIGINT`/`SIGTERM` a nivel de módulo; al importar la app repetidamente (`vi.resetModules`) se acumulaban listeners. Los manejadores ahora solo se registran cuando `app.ts` es el entry point (`isMainModule()`), junto al arranque.
 7. **Nuevos scripts funcionales**: `pnpm db:seed-documents` (poblado de 13 documentos con versiones/propuestas/coautorías) y `src/db/repair-paths.ts` (repara rutas de archivos movidas), ambos verificados en tiempo de ejecución.
 
+### ⚠️ Bugs corregidos en la ronda de enlaces (v2.1)
+
+8. **El enlace público estaba hardcodeado a `http://localhost:5173`**: en `/documents/[id]`, la dirección visible en la barra de compartir y el texto que escribía «Copiar enlace» usaban esa URL fija, así que en cualquier otro entorno se copiaba un enlace inexistente. Ambos se construyen ahora con `$page.url.origin`.
+9. **El panel de confirmación tras subir un documento enlazaba a la URL equivocada**: `documents/+page.svelte` mostraba un panel con el QR y `verificationUrl` devueltos por el backend, cuyo valor apunta a `http://<backend>/api/verify/<id>` (una dirección de API, no de la interfaz). Se eliminó el panel; el QR y el enlace público siguen disponibles en la barra de compartir del detalle.
+10. **Carácter `¿` residual** en el cambio de la última versión de `/v/[id]` y `/documents/[id]`, introducido en el commit inicial. Corregido.
+
 ---
 
 ## 7. Usuarios de Prueba
@@ -293,3 +299,82 @@ pnpm check             # (frontend) svelte-check
 ## 10. Limitación Legal Declarada
 
 > **Esta implementación NO constituye firma electrónica bajo la Ley 27269.** No utiliza una Entidad de Certificación acreditada ni la Infraestructura Oficial de Firma Electrónica (IOFE)/RENIEC. Es una implementación propia de firma digital criptográfica (par de claves asimétricas RSA-2048 por usuario) que provee autenticidad y no repudio **dentro del propio sistema**, no validez legal plena.
+
+---
+
+## 11. Ronda de mejoras: enlaces por versión
+
+**Objetivo:** que cada versión del historial tenga su propio enlace público, compartible de forma aislada.
+
+### Implementado
+
+- **Nueva ruta `/v/[id]/[version]`** (`frontend/src/routes/v/[id]/[version]/+page.svelte`): acepta `v2`, `V2` o `2`. **Sin cambios de backend**: reutiliza `GET /api/docs/:id/public` y filtra en cliente por `version_number`. Muestra solo esa versión con el título compuesto `Manual Colaborativo (V2 · Agrego el capitulo C de reportes)`, su huella SHA-256, algoritmo de firma, fecha de registro, quién la subió, un botón de descarga propio (`?versionId=`) y un enlace a `/v/[id]` (historial completo).
+- **Enlace «Abrir ↗» por versión** en la línea de tiempo de `/v/[id]` y en la de `/documents/[id]`, con `title` que identifica a qué versión apunta.
+- **Barra de compartir corregida**: la URL pública y «Copiar enlace» derivan de `$page.url.origin`.
+- **Panel de éxito de subida retirado** de `/documents`.
+
+### Verificación
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| `svelte-check` | ✅ 0 errores / 0 warnings |
+| Frontend (`vitest run`) | ✅ 2 archivos / **22 tests PASS** |
+| Backend (`vitest run`) | ✅ 12 archivos / **98 tests PASS** |
+| `vite build` | ✅ genera `entries/pages/v/_id_/_version_/_page.svelte.js` |
+| Enrutado (Chrome headless) | ✅ `/v/<id>` y `/v/<id>/v2` → `200`; `/v/<id>/v2/extra` → `404` |
+| Vista pública | ✅ título compuesto correcto y descarga con `versionId` de la versión 2 |
+| Detalle autenticado (admin) | ✅ ambos enlaces «Abrir ↗», **0 errores JS**, «Copiar enlace» copia `http://localhost:5173/v/<id>` |
+
+---
+
+## 12. Verificación de diagramas PlantUML
+
+**Objetivo:** que los **34** diagramas del repositorio (los 26 de `doc/06_diagramas_y_software/` y los 8 de [`08_fundamentos_ingenieria_software.md`](08_fundamentos_ingenieria_software.md)) se rendericen sin error en los dos visores públicos de referencia.
+
+### Servicios probados
+
+| Servicio | Endpoint | Comprobación |
+|----------|----------|--------------|
+| PlantUML oficial | `https://www.plantuml.com/plantuml/svg/<codificado>` | HTTP `200` y SVG sin marcas de error |
+| Kroki | `https://kroki.io/plantuml/svg` (POST, `text/plain`) | HTTP `200` y SVG sin marcas de error |
+
+### Defectos encontrados y corregidos
+
+| # | Defecto | Alcance | Corrección |
+|---|---------|---------|------------|
+| 1 | **Dos o más carriles declarados en una sola línea** (`\|#F5F5F5\|Emisor\|#E8F4E8\|Sistema\|`). PlantUML no lo reconoce, asume *diagrama de secuencia* y falla con `Syntax Error? (Assumed diagram type: sequence)`. | Los 6 diagramas de `diagrama_actividades.md` | Un carril por línea, con su color en la primera posición: `\|#F5F5F5\|Emisor\|` + `\|#E8F4E8\|Sistema\|` |
+| 2 | **Acciones escritas con sintaxis de carril**: `\|Calcular SHA-256\ndel contenido;` y `\|SGD-FD : Calcular hash y firmar;` creaban carriles con nombre de tarea en vez de cajas de actividad, y los carriles reales (Emisor, Sistema…) no se entraban nunca. | 41 acciones repartidas en 5 de los 6 diagramas de actividades | `\|Lane\|` seguido de `:acción;`, con el cambio de carril explícito en cada tramo de rol |
+| 3 | **Etiqueta partida por una línea que empieza por `=`**: PlantUML descarta silenciosamente el `=` inicial de una línea dentro de `:…;`, por lo que `version_number\n= MAX + 1` se renderizaba como `version_number  MAX + 1`. | 1 acción (`actividad_version`) | Escrita en una sola línea: `:Calcular version_number = MAX + 1;` |
+
+### Verificación final (uno por uno) - `doc/06_diagramas_y_software/`
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| Bloques ` ```plantuml ` localizados | ✅ **26** en 8 archivos, todos dentro de fence |
+| Render en `kroki.io` | ✅ **26/26** con HTTP `200` |
+| Render en `www.plantuml.com` | ✅ **26/26** con HTTP `200` |
+| SVG sin marcas de error (`Syntax Error`, `Assumed diagram type`…) | ✅ **26/26** |
+| Dimensiones y volumen plausibles (7 KB – 39 KB, 14 – 110 etiquetas de texto) | ✅ **26/26** |
+| Etiquetas de los 6 diagramas de actividades presentes en el SVG | ✅ **163/163** (26 + 33 + 20 + 32 + 14 + 38) |
+| Términos de contenido del fuente ausentes del SVG renderizado | ✅ **0** en los 26 (los alias declarados con `as CU01`, `as AuthSvc`, etc. no se renderizan por diseño) |
+
+### Verificación final (uno por uno) - `08_fundamentos_ingenieria_software.md`
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| Bloques ` ```plantuml ` localizados | ✅ **8** en 1 archivo, todos dentro de fence |
+| Render en `kroki.io` | ✅ **8/8** con HTTP `200` |
+| Render en `www.plantuml.com` | ✅ **8/8** con HTTP `200` |
+| SVG sin marcas de error (`Syntax Error`, `Assumed diagram type`…) | ✅ **8/8** |
+| Etiquetas del fuente localizadas en el SVG renderizado | ✅ **8/8** (acciones, etiquetas de flecha, nombres entrecomillados y notas de entregable) |
+| Diagramas cubiertos | Proceso de 8 pasos, ciclo SDLC, MVC, N-Layer, secuencia, entidad-relación, flujo Git y pipeline CI/CD |
+
+### Total del repositorio
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| Bloques ` ```plantuml ` en el repo | ✅ **34** en 9 archivos |
+| Render en ambos servicios | ✅ **34/34** |
+| Diagramas con error | ✅ **0** |
+
+---

@@ -1,8 +1,8 @@
 # Índice de Documentación — SGD-FD
 
 **Proyecto:** Sistema de Gestión Documental con Firma Digital y Trazabilidad
-**Documentos indexados:** 61
-**Extensión total:** 20 232 líneas · 979 KB
+**Documentos indexados:** 62
+**Extensión total:** 21 413 líneas · 1 037 KB
 
 ---
 
@@ -76,6 +76,7 @@
 | [`05_ejecucion.md`](05_ejecucion.md) | Acceso rápido para poner el sistema en marcha y ejecutar las pruebas |
 | [`06_progreso.md`](06_progreso.md) | Bitácora de progreso v1 (conservada como registro histórico) |
 | [`07_progreso_2_0.md`](07_progreso_2_0.md) | Bitácora de progreso v2: estado verificado, correcciones aplicadas y trabajo pendiente |
+| [`08_fundamentos_ingenieria_software.md`](08_fundamentos_ingenieria_software.md) | Fundamentos de ingeniería de software: proceso de 8 pasos, requisitos, SDLC, metodologías, arquitecturas, UML, base de datos, pruebas, seguridad, Git, herramientas, DevOps, documentación, métricas, ejemplo práctico y errores comunes (17 temas + 8 diagramas verificados) |
 
 ### 2.1. Fase 1 — Planificación y Requerimientos
 
@@ -156,7 +157,7 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 
 ## 4. Inventario Completo de Documentos
 
-### 4.1. `00_indice_documentacion/` — Portada e índice General (8)
+### 4.1. `00_indice_documentacion/` — Portada e índice General (9)
 
 | Documento | Líneas | Secciones |
 |-----------|:------:|:----------:|
@@ -168,6 +169,7 @@ Objetivo: sostener el sistema en el tiempo y medir qué se logró.
 | [`05_ejecucion.md`](05_ejecucion.md) | 106 | 7 |
 | [`06_progreso.md`](06_progreso.md) | 255 | 9 |
 | [`07_progreso_2_0.md`](07_progreso_2_0.md) | 295 | 10 |
+| [`08_fundamentos_ingenieria_software.md`](08_fundamentos_ingenieria_software.md) | 1 024 | 21 |
 
 ### 4.2. Fase 1 — Planificación y Requerimientos (10)
 
@@ -292,28 +294,35 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 
 | Métrica | Valor |
 |---------|:-----:|
-| Documentos | 61 |
-| Líneas totales | 20 232 |
-| Extensión total | 979 KB |
-| Secciones de primer nivel | 653 |
+| Documentos | 62 |
+| Líneas totales | 21 413 |
+| Extensión total | 1 037 KB |
+| Secciones de primer nivel | 668 |
 | Carpetas con documentos | 18 |
 | Carpetas reservadas vacías | 2 |
-| Enlaces relativos internos | 464 |
+| Enlaces relativos internos | 578 |
 | Enlaces rotos | 0 |
-| Diagramas PlantUML | 8 documentos |
-| Tablas de datos | 6 366 líneas |
+| Diagramas PlantUML | 9 documentos |
+| Tablas de datos | 6 801 |
 
-### 6.1. Distribución por Fase
+> **Método de medición:** líneas y bytes = suma de los 62 archivos `.md` de
+> `doc/`; secciones de primer nivel = encabezados `## ` fuera de bloques de
+> código; tablas de datos = líneas que empiezan por `|`; enlaces relativos =
+> enlaces markdown con destino relativo en los **64** `.md` del repositorio
+> (incluye `README.md` y `frontend/README.md`). Auditoría de enlaces:
+> **0 destinos inexistentes, 0 anclas sin resolver.**
+
+### 6.1. Distribución por Fase (porcentajes redondeados a 1 decimal)
 
 | Fase | Documentos | Líneas | % del total |
 |------|:----------:|:------:|:-----------:|
-| 1 — Planificación y Requerimientos | 10 | 4 440 | 21.9 % |
-| 2 — Diseño y Construcción | 23 | 6 061 | 30.0 % |
-| 3 y 4 — Desarrollo e Implementación | 3 | 950 | 4.7 % |
-| 5 — Mantenimiento y Evaluación | 8 | 3 044 | 15.0 % |
-| 6 — Diagramas y Software | 9 | 2 789 | 13.8 % |
-| `00_indice_documentacion/` (índice general y documentos de proyecto) | 8 | 2 948 | 14.6 % |
-| **Total** | **61** | **20 232** | **100 %** |
+| 1 — Planificación y Requerimientos | 10 | 4 443 | 20.7 % |
+| 2 — Diseño y Construcción | 23 | 6 061 | 28.3 % |
+| 3 y 4 — Desarrollo e Implementación | 3 | 953 | 4.5 % |
+| 5 — Mantenimiento y Evaluación | 8 | 3 052 | 14.3 % |
+| 6 — Diagramas y Software | 9 | 2 831 | 13.2 % |
+| `00_indice_documentacion/` (índice general y documentos de proyecto) | 9 | 4 073 | 19.0 % |
+| **Total** | **62** | **21 413** | **100 %** |
 
 ---
 
@@ -329,9 +338,12 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 | Tipos del frontend | `npx svelte-check` | **0 errores, 0 advertencias** |
 | Compilación del backend | `pnpm build` | Correcta |
 | Compilación del frontend | `pnpm build` | Correcta (aviso esperado de `adapter-auto`) |
-| Enlaces relativos | Auditoría automática | **0 rotos** de 464 |
+| Enlaces relativos | Auditoría automática | **0 rotos** de 578 |
 | Codificación UTF-8 | Auditoría automática | **0 caracteres de reemplazo, 0 CJK** |
 | Coherencia de identificadores | Auditoría automática | 24 CU en catálogo = 24 en diagrama |
+| Enrutado de páginas UI | Chrome headless | **200** en `/v/[id]` y `/v/[id]/[version]`; **404** en `/v/[id]/[version]/extra` |
+| Renderizado de la vista de versión | Chrome headless | Título compuesto, huella, algoritmo y descarga con `versionId` correcto; **0 errores JS** en el detalle autenticado |
+| Diagramas PlantUML | `plantuml.com` + `kroki.io` | **34/34** renderizan en ambos servicios (26 de Fase 6 + 8 de `08_fundamentos_ingenieria_software.md`); **0** con `Syntax Error` |
 
 ### 7.2. Lo que NO está Verificado
 
@@ -354,6 +366,7 @@ Dentro de cada fase, el orden natural es: mapa → detalle → verificación.
 | 4 | `uploads/` en sistema de archivos efímero, incompatible con serverless | Alta | Bloquea la nube |
 | 5 | `@types/express@^5` no corresponde a `express@^4.21.2` | Baja | Corregible en una línea |
 | 6 | `multer@1` está en su rama de mantenimiento | Media | Planificar actualización |
+| 7 | `routes/documents.ts:216` arma el enlace de compartir como `host:5173` cuando falta `FRONTEND_URL`; en producción emitiría un QR con enlace roto | Media | Abierto; la interfaz ya no depende de ese valor (usa su propio origen), pero el QR generado por el backend sí |
 
 ### 7.4. Límite Legal Declarado
 

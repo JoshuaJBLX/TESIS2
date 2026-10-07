@@ -23,8 +23,10 @@ interfaz con detalle de base de datos.
 @startuml actividad_emision
 skinparam shadowing false
 
-|#F5F5F5|Emisor|#E8F4E8|Sistema|
+|#F5F5F5|Emisor|
+|#E8F4E8|Sistema|
 start
+|Emisor|
 :Introducir titulo, descripcion\ny archivo;
 :Indicar la contrasena de firma;
 
@@ -36,26 +38,30 @@ elseif (Tamano mayor a 10 MB?) then (si)
   stop
 endif
 
-|Calcular SHA-256\ndel contenido;
-|Descifrar la clave privada\ncon la contrasena;
+|Sistema|
+:Calcular SHA-256\ndel contenido;
+:Descifrar la clave privada\ncon la contrasena;
 
 if (Contrasena correcta?) then (no)
   :Rechazar:\n400 error de autenticacion GCM;
   stop
 else (si)
-  |Firmar el hash\ncon RSA-SHA256;
-  |Insertar documento;\nversion_number = 1;
-  |Insertar la firma;\nInsertar auditoria;\nDOCUMENT_CREATED;
-  |Generar el codigo QR;\ncon la URL publica;
+  :Firmar el hash\ncon RSA-SHA256;
+  :Insertar documento;\nversion_number = 1;
+  :Insertar la firma;\nInsertar auditoria;\nDOCUMENT_CREATED;
+  :Generar el codigo QR;\ncon la URL publica;
 endif
 
-|Decidir si comparte;
+|Emisor|
+:Decidir si comparte;
 
 if (Comparte?) then (si)
-  |Marcar is_public = true;\nInsertar auditoria;\nDOCUMENT_SHARED;
+  |Sistema|
+  :Marcar is_public = true;\nInsertar auditoria;\nDOCUMENT_SHARED;
 endif
 
-|Entregar hash, firma,\nURL y QR;
+|Sistema|
+:Entregar hash, firma,\nURL y QR;
 stop
 
 @enduml
@@ -78,19 +84,24 @@ stop
 @startuml actividad_verificacion
 skinparam shadowing false
 
-|#F5F5F5|Verificador|#E8F4E8|Sistema|
+|#F5F5F5|Verificador|
+|#E8F4E8|Sistema|
 start
+|Verificador|
 :Escanear el codigo QR\ndel documento;
 
-|Consultar los metadatos\npublicos;
-|Mostrar titulo, version\nvigente, firmante y fecha;
+|Sistema|
+:Consultar los metadatos\npublicos;
+:Mostrar titulo, version\nvigente, firmante y fecha;
 
+|Verificador|
 :Seleccionar el archivo\nque se recibio;
 :Enviar el archivo al\nverificador publico;
 
 if (Se informo documentId?) then (no)
-  |Calcular SHA-256\ndel archivo;
-  |Buscar por hash en\ntodo el repositorio;
+  |Sistema|
+  :Calcular SHA-256\ndel archivo;
+  :Buscar por hash en\ntodo el repositorio;
 
   if (Hay coincidencia?) then (si)
     :Mostrar FOUND:\npuede ser un documento falso;
@@ -101,7 +112,8 @@ if (Se informo documentId?) then (no)
 else (si)
 endif
 
-|Localizar el documento\ny la version;
+|Sistema|
+:Localizar el documento\ny la version;
 
 if (Existe?) then (no)
   :Mostrar NOT_FOUND;
@@ -109,7 +121,7 @@ if (Existe?) then (no)
 else (si)
 endif
 
-|Calcular SHA-256\ndel archivo recibido;
+:Calcular SHA-256\ndel archivo recibido;
 
 if (Coincide con el\nhash registrado?) then (no)
   :Mostrar MANIPULATED:\nel contenido fue alterado;
@@ -117,7 +129,7 @@ if (Coincide con el\nhash registrado?) then (no)
 else (si)
 endif
 
-|Verificar la firma\ncon la clave publica;
+:Verificar la firma\ncon la clave publica;
 
 if (Firma valida?) then (no)
   :Mostrar INVALID_SIGNATURE;
@@ -148,10 +160,13 @@ stop
 @startuml actividad_version
 skinparam shadowing false
 
-|#F5F5F5|Propietario|#E8F4E8|Sistema|
+|#F5F5F5|Propietario|
+|#E8F4E8|Sistema|
 start
+|Propietario|
 :Editar el documento;
 
+|Sistema|
 if (El motivo del cambio\nesta informado?) then (no)
   :Rechazar:\n400 changeDescription requerido;
   stop
@@ -164,9 +179,9 @@ if (El contenido cambio?) then (no)
 else (si)
 endif
 
-|Calcular el hash\nde la nueva version;
-|Calcular version_number\n= MAX + 1;
-|Firmar con la clave privada;\nInsertar la version;\nInsertar la firma;
+:Calcular el hash\nde la nueva version;
+:Calcular version_number = MAX + 1;
+:Firmar con la clave privada;\nInsertar la version;\nInsertar la firma;
 
 if (Es una propuesta aceptada?) then (si)
   :Registrar coauthorId;\nmarcar la propuesta\ncomo ACCEPTED;
@@ -174,7 +189,7 @@ else (no)
   :No hay coautor registrado;
 endif
 
-|Insertar auditoria;\nVERSION_CREATED;
+:Insertar auditoria;\nVERSION_CREATED;
 :Devolver la nueva version,\nsu hash y su firma;
 stop
 
@@ -189,38 +204,48 @@ stop
 @startuml actividad_propuesta
 skinparam shadowing false
 
-|#F5F5F5|Coautor|#E8F4E8|Sistema|#FFE8E8|Propietario|
+|#F5F5F5|Coautor|
+|#E8F4E8|Sistema|
+|#FFE8E8|Propietario|
 start
+|Coautor|
 :Preparar su version\ndel documento;
 
 if (El documento es publico?) then (no)
+  |Sistema|
   :Rechazar:\n403 propuestas no permitidas\nen documentos privados;
   stop
 else (si)
 endif
 
+|Coautor|
 :Enviar la propuesta con\nsu contrasena de firma;
 
 if (Contrasena correcta?) then (no)
+  |Sistema|
   :Rechazar:\n400;
   stop
 else (si)
-  |Firmar la propuesta;\nInsertar estado PENDING;\nInsertar auditoria:\nPROPOSAL_CREATED;
+  |Sistema|
+  :Firmar la propuesta;\nInsertar estado PENDING;\nInsertar auditoria:\nPROPOSAL_CREATED;
 endif
 
-|Calcular el diferencial\nentre la version vigente\ny la propuesta;
-|Mostrar el diferencial\nal propietario;
+:Calcular el diferencial\nentre la version vigente\ny la propuesta;
+:Mostrar el diferencial\nal propietario;
 
+|Propietario|
 :Revisar el diferencial;
 
 if (Acepta?) then (si)
-  |Registrar coauthorId;\nInsertar nueva version\nfirmada por el propietario;
-  |Marcar la propuesta\ncomo ACCEPTED;
-  |Insertar auditoria:\nPROPOSAL_ACCEPTED,\nVERSION_CREATED;
+  :Registrar coauthorId;\nInsertar nueva version\nfirmada por el propietario;
+  |Sistema|
+  :Marcar la propuesta\ncomo ACCEPTED;
+  :Insertar auditoria:\nPROPOSAL_ACCEPTED,\nVERSION_CREATED;
   :Notificar al coautor\nque su propuesta\nfue aceptada;
 else (no)
-  |Marcar la propuesta\ncomo REJECTED;
-  |Insertar auditoria:\nPROPOSAL_REJECTED;
+  |Sistema|
+  :Marcar la propuesta\ncomo REJECTED;
+  :Insertar auditoria:\nPROPOSAL_REJECTED;
   :Notificar al coautor\nque su propuesta\nfue rechazada;
 endif
 
@@ -237,10 +262,13 @@ stop
 @startuml actividad_auditoria
 skinparam shadowing false
 
-|#F5F5F5|Cualquier actor|#E8F4E8|AuditService|
+|#F5F5F5|Cualquier actor|
+|#E8F4E8|AuditService|
 start
+|Cualquier actor|
 :Ocurre una accion relevante;
 
+|AuditService|
 :Invocar append(tipo, entidad, id,\nusuario, datos);
 :Leer el current_hash\ndel ultimo registro;
 
@@ -267,44 +295,58 @@ stop
 @startuml actividad_completa
 skinparam shadowing false
 
-|#F9E8E8|Emisor|#E8F0F8|SGD-FD|#E8F8F0|Destinatario|
+|#F9E8E8|Emisor|
+|#E8F0F8|SGD-FD|
+|#E8F8F0|Destinatario|
 start
+|Emisor|
 :Preparar el documento;
 
-|SGD-FD : Calcular hash y firmar;
-|SGD-FD : Generar el codigo QR;
+|SGD-FD|
+:Calcular hash y firmar;
+:Generar el codigo QR;
 
-|Emisor : Distribuir el documento\ncon su URL de verificacion;
+|Emisor|
+:Distribuir el documento\ncon su URL de verificacion;
 
-|Destinatario : Recibir el documento;
+|Destinatario|
+:Recibir el documento;
 
 if (Desconfia o tiene dudas?) then (no)
-  |Destinatario : Usar el documento\nsin verificar;
+  :Usar el documento\nsin verificar;
   stop
 else (si)
-  |Destinatario : Escanear el QR;
-  |SGD-FD : Mostrar metadatos publicos;
-  |Destinatario : Subir el archivo recibido;
-  |SGD-FD : Recalcular el hash;
+  :Escanear el QR;
+  |SGD-FD|
+  :Mostrar metadatos publicos;
+  |Destinatario|
+  :Subir el archivo recibido;
+  |SGD-FD|
+  :Recalcular el hash;
 
   if (Hash coincide?) then (no)
-    |SGD-FD : MANIPULATED;
-    |Destinatario : Rechazar el documento\ny avisar al emisor;
+    :MANIPULATED;
+    |Destinatario|
+    :Rechazar el documento\ny avisar al emisor;
     stop
   else (si)
   endif
 
-  |SGD-FD : Verificar la firma;
+  |SGD-FD|
+  :Verificar la firma;
 
   if (Firma valida?) then (no)
-    |SGD-FD : INVALID_SIGNATURE;
-    |Destinatario : Rechazar el documento;
+    :INVALID_SIGNATURE;
+    |Destinatario|
+    :Rechazar el documento;
     stop
   else (si)
   endif
 
-  |SGD-FD : VALID;
-  |Destinatario : Aceptar el documento;
+  |SGD-FD|
+  :VALID;
+  |Destinatario|
+  :Aceptar el documento;
 endif
 
 stop
