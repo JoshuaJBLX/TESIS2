@@ -32,6 +32,7 @@ interface DocumentRecord {
   owner_id: string;
   owner_username: string;
   is_public: number;
+  share_mode: 'all' | 'latest' | 'explicit';
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +51,7 @@ interface VersionRecord {
   source_proposal_id: string | null;
   upload_date: string;
   change_description: string | null;
+  is_public: number;
   signer_username: string;
   uploader_username: string;
   coauthor_username: string | null;
@@ -379,6 +381,50 @@ export class DocumentService {
     return { documentId, isPublic: isPublic ? 1 : 0 };
   }
 
+  async setDocumentSharing(
+    documentId: string,
+    userId: string,
+    options: { shareMode: string; versionIds?: string[] }
+  ): Promise<{ documentId: string; shareMode: 'all' | 'latest' | 'explicit' }> {
+    const document = this.getDocumentRecord(documentId);
+    if (!document) {
+      throw new Error('Documento no encontrado');
+    }
+    if (document.owner_id !== userId) {
+      throw new Error('No tienes permisos para configurar la compartición');
+    }
+
+    const allowedShareModes = ['all', 'latest', 'explicit'];
+    const shareMode = (options.shareMode || 'all') as 'all' | 'latest' | 'explicit';
+    if (!allowedShareModes.includes(shareMode)) {
+      throw new Error('Modo de compartición inválido');
+    }
+
+    if (shareMode === 'explicit' && Array.isArray(options.versionIds)) {
+      const publicIds = [...new Set(options.versionIds.filter((id: unknown): id is string => typeof id === 'string'))];
+      run('UPDATE document_versions SET is_public = 0 WHERE document_id = ?', [documentId]);
+      for (const versionId of publicIds) {
+        run('UPDATE document_versions SET is_public = 1 WHERE id = ? AND document_id = ?', [versionId, documentId]);
+      }
+    }
+
+    run('UPDATE documents SET share_mode = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [shareMode, documentId]);
+    auditService.append('DOCUMENT_SHARING_CHANGED', 'document', documentId, userId, { shareMode });
+    saveDatabase();
+    return { documentId, shareMode };
+  }
+
+  private versionIsPublicShareable(
+    document: DocumentRecord,
+    version: { id: string; is_public: number } | null,
+    isLatest: boolean
+  ): boolean {
+    if (!version) return false;
+    if (document.share_mode === 'explicit') return version.is_public === 1;
+    if (document.share_mode === 'latest') return isLatest;
+    return true;
+  }
+
   getDocuments(userId: string, search?: string): any[] {
     const baseQuery = `SELECT d.*, 
         (SELECT MAX(version_number) FROM document_versions WHERE document_id = d.id) as current_version,
@@ -421,8 +467,7 @@ export class DocumentService {
   }
 
   getDocumentVersions(documentId: string, userId?: string): any[] {
-    if (userId && !queryOne('SELECT id FROM documents WHERE id = ? AND owner_id = ?', [documentId, userId])) return [];
-    return queryAll(
+    const all = queryAll(
       `SELECT dv.*, ds.signature_value, ds.signature_algorithm, ds.signed_at,
         u.username as uploader_username,
         su.username as signer_username,
@@ -436,6 +481,23 @@ export class DocumentService {
        ORDER BY dv.version_number DESC`,
       [documentId]
     );
+
+    if (userId) {
+      if (!queryOne('SELECT id FROM documents WHERE id = ? AND owner_id = ?', [documentId, userId])) return [];
+      return all;
+    }
+
+    const document = this.getDocumentRecord(documentId);
+    if (!document || !document.is_public) return [];
+
+    if (document.share_mode === 'explicit') {
+      return all.filter((v) => Number(v.is_public) === 1);
+    }
+    if (document.share_mode === 'latest') {
+      const maxVersion = all.reduce((max, v) => Math.max(max, Number(v.version_number)), 0);
+      return all.filter((v) => Number(v.version_number) === maxVersion);
+    }
+    return all;
   }
 
   getDocumentVersionFile(versionId: string): any | null {
@@ -712,11 +774,19 @@ export class DocumentService {
       ? queryOne(
           'SELECT * FROM document_versions WHERE id = ? AND document_id = ?',
           [versionId, documentId]
-        ) as { file_path: string; file_name: string; mime_type: string; file_size: number } | null
+        ) as { file_path: string; file_name: string; mime_type: string; file_size: number; is_public: number } | null
       : this.getLatestVersionRecord(documentId);
 
     if (!base || !base.file_path) {
       throw new Error('Version no encontrada');
+    }
+
+    if (!isOwnerOrMissing(userId, document.owner_id)) {
+      const latest = this.getLatestVersionRecord(documentId);
+      const isLatest = base.id === latest?.id;
+      if (!this.versionIsPublicShareable(document, base, isLatest)) {
+        throw new Error('Esta versión no está disponible públicamente');
+      }
     }
 
     return {
@@ -839,8 +909,26 @@ export class DocumentService {
     if (!document) {
       throw new Error('Documento no encontrado');
     }
-    if (!document.is_public && !isOwnerOrMissing(userId, document.owner_id)) {
+    const isOwner = isOwnerOrMissing(userId, document.owner_id);
+    if (!document.is_public && !isOwner) {
       throw new Error('No tienes permisos para comparar este documento');
+    }
+
+    if (!isOwner && document.is_public) {
+      if (sourceType === 'proposal' || targetType === 'proposal') {
+        throw new Error('Las propuestas no están disponibles públicamente');
+      }
+      const sourceVersion = this.getVersionRecord(documentId, sourceId);
+      const targetVersion = this.getVersionRecord(documentId, targetId);
+      const latest = this.getLatestVersionRecord(documentId);
+      if (!sourceVersion || !targetVersion) {
+        throw new Error('No se pudo encontrar uno de los archivos a comparar');
+      }
+      const sourceOk = this.versionIsPublicShareable(document, sourceVersion, sourceVersion.id === latest?.id);
+      const targetOk = this.versionIsPublicShareable(document, targetVersion, targetVersion.id === latest?.id);
+      if (!sourceOk || !targetOk) {
+        throw new Error('Una de las versiones no está disponible públicamente');
+      }
     }
 
     const source = this.getArtifactForComparison(documentId, sourceType, sourceId);

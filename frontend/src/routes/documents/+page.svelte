@@ -105,7 +105,11 @@
 
 <div class="documents-page">
   <div class="page-header">
-    <h1>Mis Documentos</h1>
+    <div>
+      <span class="eyebrow">Gestiona tu archivo</span>
+      <h1>Mis Documentos</h1>
+      <p class="sub">Cada versión queda firmada y enlazada a la cadena de confianza.</p>
+    </div>
     <button class="btn-primary btn-anim" onclick={() => showUpload = !showUpload}>
       {showUpload ? 'Cancelar' : '+ Subir Documento'}
     </button>
@@ -134,40 +138,42 @@
 
   {#if showUpload}
     <div class="upload-panel anim-slide">
-      <h2>Subir Nuevo Documento</h2>
-      <p class="hint">El documento sera firmado automaticamente con tu clave privada (RSA-2048).</p>
+      <div class="upload-head"><span class="eyebrow">Nuevo documento</span><h2>Subir y firmar</h2></div>
+      <p class="hint">El archivo se firmará automáticamente con tu clave privada (RSA-2048) y quedará anclado a la cadena.</p>
 
       {#if uploadError}
-        <div class="error-message anim-shake">{uploadError}</div>
+        <div class="error-message anim-shake">⚠ {uploadError}</div>
       {/if}
 
       <form onsubmit={handleUpload}>
         <div class="form-group">
           <label for="file">Archivo</label>
-          <input type="file" id="file" onchange={handleFileChange} required disabled={uploading} />
-          {#if uploadFile}
-            <span class="file-info">{uploadFile.name} ({(uploadFile.size / 1024).toFixed(1)} KB)</span>
-          {/if}
+          <div class="file-zone">
+            <span class="file-zone-icon">↥</span>
+            <span class="file-zone-copy">{uploadFile ? uploadFile.name : 'Selecciona el archivo'}<small>{uploadFile ? (uploadFile.size / 1024).toFixed(1) + ' KB' : 'PDF, Word o texto · máximo 10 MB'}</small></span>
+            <input type="file" id="file" onchange={handleFileChange} required disabled={uploading} />
+          </div>
         </div>
 
         <div class="form-group">
           <label for="title">Titulo del documento</label>
-          <input type="text" id="title" bind:value={uploadTitle} placeholder="Ej: Contrato de Arrendamiento" required disabled={uploading} />
+          <input type="text" id="title" class="dt-input" bind:value={uploadTitle} placeholder="Ej: Contrato de Arrendamiento" required disabled={uploading} />
         </div>
 
-        <div class="form-group">
-          <label for="desc">Descripcion (opcional)</label>
-          <input type="text" id="desc" bind:value={uploadDescription} placeholder="Descripcion breve" disabled={uploading} />
-        </div>
-
-        <div class="form-group">
-          <label for="change">Que se modifico</label>
-          <input type="text" id="change" bind:value={uploadChangeDesc} placeholder="Ej: Version inicial del contrato" disabled={uploading} />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="desc">Descripcion (opcional)</label>
+            <input type="text" id="desc" class="dt-input" bind:value={uploadDescription} placeholder="Descripcion breve" disabled={uploading} />
+          </div>
+          <div class="form-group">
+            <label for="change">Que se modifico</label>
+            <input type="text" id="change" class="dt-input" bind:value={uploadChangeDesc} placeholder="Ej: Version inicial del contrato" disabled={uploading} />
+          </div>
         </div>
 
         <div class="form-group">
           <label for="pwd">Tu contrasena (para descifrar clave privada y firmar)</label>
-          <input type="password" id="pwd" bind:value={uploadPassword} placeholder="Tu contrasena de login" required disabled={uploading} />
+          <input type="password" id="pwd" class="dt-input" bind:value={uploadPassword} placeholder="Tu contrasena de login" required disabled={uploading} />
         </div>
 
         <button type="submit" class="btn-primary btn-anim" class:is-loading={uploading} disabled={uploading || !uploadFile || !uploadTitle || !uploadPassword}>
@@ -190,12 +196,13 @@
     </div>
   {:else if documents.length === 0}
     <div class="empty-state">
-      <p>No tienes documentos aun.</p>
+      <span class="empty-icon">🗂</span>
+      <p><strong>No tienes documentos aun.</strong></p>
       <p>Sube tu primer documento para que sea firmado digitalmente.</p>
     </div>
   {:else}
     {#if downloadError}
-      <div class="download-error anim-shake">{downloadError}</div>
+      <div class="download-error anim-shake">⚠ {downloadError}</div>
     {/if}
     <div class="documents-list stagger">
       {#each documents as doc}
@@ -207,13 +214,13 @@
               <p class="doc-meta">
                 v{doc.current_version} &middot; {doc.owner_username} &middot; {formatDate(doc.updated_at)}
                 {#if doc.is_public}
-                  <span class="public-tag">Público</span>
+                  <span class="public-tag"><i></i>Público</span>
                 {:else}
                   <span class="private-tag">Privado</span>
                 {/if}
               </p>
             </div>
-            <div class="doc-arrow">&rsaquo;</div>
+            <div class="doc-arrow">&#8250;</div>
           </a>
           <button
             class="doc-download btn-anim"
@@ -239,313 +246,417 @@
   .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-bottom: 2rem;
     gap: 1rem;
+    flex-wrap: wrap;
   }
-
-  h1 {
-    color: #1a1a2e;
+  .page-header h1 {
+    color: var(--dt-ink);
+    letter-spacing: -0.04em;
+    margin: 9px 0 4px;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+  }
+  .page-header .sub {
+    color: var(--dt-body);
+    font-size: 0.85rem;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--dt-pri);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--dt-line2);
+    box-shadow: 0 6px 18px -8px rgba(109, 92, 255, 0.35);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dt-grad);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.16);
+    animation: dtPulse 2.4s ease-out infinite;
   }
 
   .btn-primary {
-    background-color: #4f46e5;
+    background: var(--dt-grad);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 0.8rem 1.6rem;
+    border-radius: 12px;
+    font-weight: 750;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    box-shadow: var(--dt-glow-sm);
   }
-
   .btn-primary:hover:not(:disabled) {
-    background-color: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: var(--dt-glow);
+    filter: brightness(1.04);
   }
-
   .btn-primary:disabled {
-    background-color: #ccc;
+    background: #c6cbdd;
     cursor: not-allowed;
+    box-shadow: none;
   }
 
   .search-bar {
     margin-bottom: 1.5rem;
   }
-
   .search-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
   }
-
   .search-icon {
     position: absolute;
-    left: 1rem;
+    left: 1.1rem;
     font-size: 1rem;
-    color: #9ca3af;
+    color: var(--dt-mute);
     pointer-events: none;
   }
-
   .search-input {
     width: 100%;
-    padding: 0.75rem 2.5rem 0.75rem 2.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background: #fbfdff;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 0.8rem 3rem 0.8rem 2.9rem;
+    border: 1px solid var(--dt-line2);
+    border-radius: 14px;
+    font-size: 0.93rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dt-ink);
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
   }
-
   .search-input:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+    border-color: var(--dt-pri);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(109, 92, 255, 0.14);
   }
-
   .search-clear {
     position: absolute;
-    right: 0.75rem;
+    right: 0.9rem;
     background: none;
     border: none;
-    font-size: 1.25rem;
-    color: #9ca3af;
+    font-size: 1.4rem;
+    color: var(--dt-mute);
     cursor: pointer;
     padding: 0.25rem;
     line-height: 1;
-    border-radius: 4px;
-    transition: color 0.2s;
+    border-radius: 6px;
+    transition: color 0.18s;
   }
-
   .search-clear:hover {
-    color: #4f46e5;
+    color: var(--dt-pri);
   }
-
   .search-results-info {
     display: block;
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-    color: #6b7280;
+    margin-top: 0.55rem;
+    font-size: 0.78rem;
+    color: var(--dt-body);
   }
 
   .upload-panel {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: #fff;
+    padding: 1.7rem;
+    border-radius: 20px;
+    box-shadow: var(--dt-shadow-lg);
     margin-bottom: 2rem;
-    border: 1px solid #e5eaf2;
+    border: 1px solid var(--dt-line);
+    overflow: hidden;
   }
-
+  .upload-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--dt-grad-hot);
+  }
+  .upload-head h2 {
+    color: var(--dt-ink);
+    margin-top: 8px;
+    letter-spacing: -0.03em;
+  }
   .hint {
-    color: #666;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
+    color: var(--dt-body);
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
   }
-
   .error-message {
-    background-color: #fee;
-    border: 1px solid #fcc;
-    color: #c00;
-    padding: 0.75rem;
-    border-radius: 6px;
+    background: var(--dt-err-bg);
+    border: 1px solid var(--dt-err-line);
+    color: #be123c;
+    padding: 0.8rem;
+    border-radius: 11px;
     margin-bottom: 1rem;
+    font-size: 0.8rem;
   }
-
   .form-group {
     margin-bottom: 1rem;
+    flex: 1;
   }
-
-  label {
+  .form-row {
+    display: flex;
+    gap: 14px;
+  }
+  .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: #35415c;
   }
-
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    background: #fbfdff;
+  .dt-input:invalid {
+    box-shadow: none;
   }
-
-  input:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+  .file-zone {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1.5px dashed var(--dt-line2);
+    border-radius: 14px;
+    background: linear-gradient(160deg, #fbfcff, #f4f1ff);
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
   }
-
-  .file-info {
-    display: block;
-    margin-top: 0.5rem;
-    color: #666;
-    font-size: 0.85rem;
+  .file-zone:hover {
+    border-color: var(--dt-pri);
+    background: #f3f0ff;
+  }
+  .file-zone-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--dt-grad);
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 900;
+    box-shadow: var(--dt-glow-sm);
+  }
+  .file-zone-copy {
+    font-size: 0.88rem;
+    color: var(--dt-ink);
+    display: grid;
+    gap: 3px;
+  }
+  .file-zone-copy small {
+    color: var(--dt-mute);
+    font-size: 0.7rem;
+  }
+  .file-zone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
   }
 
   .empty-state {
     text-align: center;
-    padding: 3rem;
-    color: #666;
+    padding: 3.4rem 1.5rem;
+    color: var(--dt-body);
+    background: #fff;
+    border: 1.5px dashed var(--dt-line2);
+    border-radius: 20px;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+  }
+  .empty-icon {
+    font-size: 1.9rem;
+    margin: 0 0 4px;
   }
 
   .skeletons-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
-
   .skeleton-row {
     display: flex;
     align-items: center;
     gap: 1rem;
-    height: 66px;
+    height: 72px;
     padding: 0 1.25rem;
     background: #fff;
-    border: 1px solid #e5eaf2;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--dt-line);
+    border-radius: 15px;
+    box-shadow: var(--dt-shadow);
   }
-
   .sk-pill {
-    width: 38px;
-    height: 38px;
-    border-radius: 9px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     flex: none;
   }
-
   .sk-line {
     height: 12px;
   }
-
   .w70 { width: 55%; }
   .w45 { width: 30%; }
-
   .sk-square {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
     margin-left: auto;
     flex: none;
   }
-
   @media (max-width: 600px) {
     .sk-line.w70 { width: 45%; }
     .sk-line.w45 { display: none; }
+    .form-row { flex-direction: column; gap: 0; }
   }
 
   .documents-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
-
   .document-row {
     position: relative;
   }
-
   .document-card {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: white;
-    padding: 1rem 1.25rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    padding: 1rem 1.3rem;
+    border-radius: 16px;
+    box-shadow: var(--dt-shadow);
     text-decoration: none;
     color: inherit;
-    transition: box-shadow 0.2s;
-    border: 1px solid #e5eaf2;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    border: 1px solid var(--dt-line);
+    padding-right: 62px;
   }
-
   .document-card:hover {
-    box-shadow: 0 8px 24px rgba(30,41,59,.12);
-    transform: translateY(-1px);
+    box-shadow: var(--dt-shadow-lg);
+    transform: translateY(-2px);
+    border-color: #cdd6f2;
   }
-
+  .doc-icon {
+    font-size: 1.4rem;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--dt-grad-soft);
+    color: var(--dt-pri);
+    border: 1px solid #ddd7fa;
+    flex: none;
+  }
+  .doc-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .doc-info h3 {
+    color: var(--dt-ink);
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .doc-meta {
+    color: var(--dt-body);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .public-tag,
+  .private-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 750;
+  }
+  .public-tag {
+    background: var(--dt-ok-bg);
+    color: #047857;
+    border: 1px solid var(--dt-ok-line);
+  }
+  .public-tag i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
+  }
+  .private-tag {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+  .doc-arrow {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f4f1ff;
+    color: var(--dt-pri);
+    font-size: 1.3rem;
+    font-weight: 800;
+    flex: none;
+    transition: transform 0.18s, background 0.18s;
+  }
+  .document-card:hover .doc-arrow {
+    background: var(--dt-grad);
+    color: #fff;
+    transform: translateX(3px);
+  }
   .doc-download {
     position: absolute;
-    right: 1.1rem;
+    right: 1.3rem;
     top: 50%;
     transform: translateY(-50%);
     background: #fff;
-    color: #4f46e5;
-    border: 1px solid #c7d2fe;
-    width: 34px;
-    height: 34px;
+    color: var(--dt-pri);
+    border: 1px solid var(--dt-line2);
+    width: 36px;
+    height: 36px;
     display: grid;
     place-items: center;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 11px;
+    font-size: 1.1rem;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.18s, border-color 0.18s, transform 0.18s;
     cursor: pointer;
+    box-shadow: 0 4px 12px -6px rgba(15, 23, 42, 0.15);
   }
-
   .doc-download:hover:not(:disabled) {
-    background: #eef2ff;
-    border-color: #818cf8;
+    background: var(--dt-grad);
+    border-color: transparent;
+    color: #fff;
+    transform: translateY(-50%) translateY(-2px);
   }
-
   .doc-download:disabled {
     opacity: 0.5;
     cursor: wait;
   }
-
   .download-error {
-    background: #fff1f2;
-    border: 1px solid #fecdd3;
+    background: var(--dt-err-bg);
+    border: 1px solid var(--dt-err-line);
     color: #be123c;
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
     margin-bottom: 1rem;
-    font-size: 0.82rem;
-  }
-
-  .public-tag {
-    display: inline-block;
-    margin-left: 6px;
-    background: #ecfdf5;
-    color: #047857;
-    border: 1px solid #bbf7d0;
-    padding: 1px 7px;
-    border-radius: 5px;
-    font-size: 0.68rem;
-    font-weight: 700;
-  }
-
-  .private-tag {
-    display: inline-block;
-    margin-left: 6px;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    padding: 1px 7px;
-    border-radius: 5px;
-    font-size: 0.68rem;
-    font-weight: 700;
-  }
-
-  .doc-icon {
-    font-size: 2rem;
-  }
-
-  .doc-info {
-    flex: 1;
-  }
-
-  .doc-info h3 {
-    color: #1a1a2e;
-    margin-bottom: 0.25rem;
-  }
-
-  .doc-meta {
-    color: #666;
-    font-size: 0.85rem;
-  }
-
-  .doc-arrow {
-    font-size: 1.5rem;
-    color: #ccc;
+    font-size: 0.8rem;
   }
 </style>

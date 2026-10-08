@@ -25,6 +25,7 @@ export interface Document {
   description: string | null;
   owner_id: string;
   is_public: number;
+  share_mode: 'all' | 'latest' | 'explicit';
   created_at: string;
   updated_at: string;
 }
@@ -43,6 +44,7 @@ export interface DocumentVersion {
   source_proposal_id: string | null;
   upload_date: string;
   change_description: string | null;
+  is_public: number;
 }
 
 export interface DocumentProposal {

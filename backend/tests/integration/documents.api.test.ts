@@ -349,4 +349,90 @@ describe('API /api/docs', () => {
     expect(res.body.data.supported).toBe(true);
     expect(res.body.data.summary.additions).toBe(1);
   });
+
+  it('filtra versiones públicas según el modo de compartición del propietario', async () => {
+    const owner = await makeUser();
+    const v1 = tempTextFile('v1');
+    const up = await request(app)
+      .post('/api/docs')
+      .set('Authorization', `Bearer ${owner.token}`)
+      .attach('file', v1.file, { filename: v1.name, contentType: 'text/plain' })
+      .field('title', 'Compartición')
+      .field('password', owner.password)
+      .expect(201);
+    const docId = up.body.data.documentId;
+    const v1Id = up.body.data.versionId;
+
+    const v2 = tempTextFile('v2');
+    const upd = await request(app)
+      .put(`/api/docs/${docId}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .attach('file', v2.file, { filename: v2.name, contentType: 'text/plain' })
+      .field('changeDescription', 'segunda versión')
+      .field('password', owner.password)
+      .expect(200);
+    const v2Id = upd.body.data.versionId;
+
+    await request(app).patch(`/api/docs/${docId}/visibility`).set('Authorization', `Bearer ${owner.token}`).send({ isPublic: true }).expect(200);
+
+    // Por defecto 'all' → todo el historial visible
+    const pubAll = await request(app).get(`/api/docs/${docId}/public`).expect(200);
+    expect(pubAll.body.data.document.share_mode).toBe('all');
+    expect(pubAll.body.data.versions.map((x: any) => x.version_number)).toEqual([2, 1]);
+
+    // Modo 'latest' → solo la versión actual
+    const setLatest = await request(app)
+      .patch(`/api/docs/${docId}/sharing`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ shareMode: 'latest' })
+      .expect(200);
+    expect(setLatest.body.data.shareMode).toBe('latest');
+
+    const pubLatest = await request(app).get(`/api/docs/${docId}/public`).expect(200);
+    expect(pubLatest.body.data.versions.map((x: any) => x.version_number)).toEqual([2]);
+
+    // El enlace directo de v1 deja de funcionar; la actual descarga OK
+    await request(app).get(`/api/docs/${docId}/file?versionId=${v1Id}`).expect(403);
+    const dlLatest = await request(app).get(`/api/docs/${docId}/file`).expect(200);
+    expect(dlLatest.text).toBe('v2');
+
+    // Modo 'explicit' → solo v1 marcada (la antigua)
+    const setExplicit = await request(app)
+      .patch(`/api/docs/${docId}/sharing`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ shareMode: 'explicit', versionIds: [v1Id] })
+      .expect(200);
+    expect(setExplicit.body.data.shareMode).toBe('explicit');
+
+    const pubExplicit = await request(app).get(`/api/docs/${docId}/public`).expect(200);
+    expect(pubExplicit.body.data.versions.map((x: any) => x.version_number)).toEqual([1]);
+    expect(pubExplicit.body.data.versions[0].is_public).toBe(1);
+
+    // Descargas: v1 sí, v2 no, y la "actual" tampoco porque no está marcada
+    const dlV1 = await request(app).get(`/api/docs/${docId}/file?versionId=${v1Id}`).expect(200);
+    expect(dlV1.text).toBe('v1');
+    await request(app).get(`/api/docs/${docId}/file?versionId=${v2Id}`).expect(403);
+    await request(app).get(`/api/docs/${docId}/file`).expect(403);
+  });
+
+  it('prohibe configurar la compartición a un extraño', async () => {
+    const owner = await makeUser();
+    const { file, name } = tempTextFile('ajeno share');
+    const up = await request(app)
+      .post('/api/docs')
+      .set('Authorization', `Bearer ${owner.token}`)
+      .attach('file', file, { filename: name, contentType: 'text/plain' })
+      .field('title', 'Ajeno Share')
+      .field('password', owner.password)
+      .expect(201);
+
+    const stranger = await makeUser();
+    const res = await request(app)
+      .patch(`/api/docs/${up.body.data.documentId}/sharing`)
+      .set('Authorization', `Bearer ${stranger.token}`)
+      .send({ shareMode: 'latest' })
+      .expect(400);
+
+    expect(res.body.error).toContain('No tienes permisos');
+  });
 });

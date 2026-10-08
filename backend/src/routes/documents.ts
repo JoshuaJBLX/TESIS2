@@ -22,6 +22,7 @@ function cleanupTemp(file?: Express.Multer.File) {
 function fileErrorStatus(error: any): number {
   const msg = String(error?.message || '');
   if (msg.includes('No tienes permisos')) return 403;
+  if (msg.includes('disponible')) return 403;
   if (msg.includes('no encontrado') || msg.includes('no encontrada')) return 404;
   return 400;
 }
@@ -254,6 +255,19 @@ router.patch('/:id/visibility', authenticate, async (req: AuthRequest, res: Resp
   try {
     const isPublic = Boolean(req.body?.isPublic);
     const result = await documentService.setDocumentVisibility(String(req.params.id), req.user!.id, isPublic);
+    res.json({ success: true, data: result });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// PATCH /api/docs/:id/sharing - Configure which versions are shared (owner only)
+router.patch('/:id/sharing', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await documentService.setDocumentSharing(String(req.params.id), req.user!.id, {
+      shareMode: typeof req.body?.shareMode === 'string' ? req.body.shareMode : 'all',
+      versionIds: Array.isArray(req.body?.versionIds) ? req.body.versionIds : undefined
+    });
     res.json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message });

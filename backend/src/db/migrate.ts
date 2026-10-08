@@ -140,8 +140,10 @@ export async function runMigration(): Promise<void> {
   db.run(`CREATE TRIGGER IF NOT EXISTS audit_log_no_delete BEFORE DELETE ON audit_log BEGIN SELECT RAISE(ABORT, 'audit_log is append-only'); END`);
 
   addColumnIfMissing(db, 'documents', 'is_public', 'is_public INTEGER NOT NULL DEFAULT 0');
+  addColumnIfMissing(db, 'documents', 'share_mode', "share_mode TEXT NOT NULL DEFAULT 'all'");
   addColumnIfMissing(db, 'document_versions', 'coauthor_id', 'coauthor_id TEXT');
   addColumnIfMissing(db, 'document_versions', 'source_proposal_id', 'source_proposal_id TEXT');
+  addColumnIfMissing(db, 'document_versions', 'is_public', 'is_public INTEGER NOT NULL DEFAULT 0');
 
   db.run(`CREATE INDEX IF NOT EXISTS idx_versions_document ON document_versions(document_id)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_versions_coauthor ON document_versions(coauthor_id)`);

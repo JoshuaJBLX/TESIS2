@@ -28,7 +28,7 @@
 | `GET /api/audit/verify-chain` | ✅ `valid=true`, **34 entradas** encadenadas (tras flujo E2E) |
 | Flujo E2E colaborativo | ✅ doc público → propuesta (carlos) + propuesta (maria) → comparador (add=2/del=1) → aceptar (v2 + coautor=carlos) → rechazar (maria=rejected) → descarga anónima → perfil público |
 | **E2E final tras rediseño UI** | ✅ **21/21 checks PASS**: descargas (pública anónima, por versión, privada con JWT, privada anónima → `403`), perfiles, propuestas, comparador, y todas las rutas UI (`/u`, `/v`, `/documents`, `/documents/[id]`, dashboard, verify) responden `200` |
-| Backend (`vitest run`) | ✅ **12 archivos / 98 tests PASS** (unit, services e integración API con supertest + BD temp) |
+| Backend (`vitest run`) | ✅ **12 archivos / 100 tests PASS** (unit, services e integración API con supertest + BD temp) |
 | Frontend (`vitest run`) | ✅ **2 archivos / 22 tests PASS** (`api.test.ts`, `stores/auth.test.ts`) |
 | `pnpm db:seed-documents` | ✅ crea 5 usuarios y **13 documentos de ejemplo** (versiones, propuestas pendientes/rechazadas/aceptadas con coautoría) |
 | Frontend (`pnpm check`) | ✅ 0 errores / 0 warnings |
@@ -174,6 +174,7 @@ tesis-documental/
 | GET | `/api/docs/:id/public` | No | — | ✅ |
 | GET | `/api/docs/:id/file` | Opcional | público/propietario | ✅ |
 | PATCH | `/api/docs/:id/visibility` | Sí | propietario | ✅ |
+| PATCH | `/api/docs/:id/sharing` | Sí | propietario | ✅ |
 | GET | `/api/docs/:id/proposals` | Sí | propietario | ✅ |
 | POST | `/api/docs/:id/proposals` | Sí | user (doc público) | ✅ |
 | GET | `/api/docs/:id/proposals/:pid/file` | Opcional | público/propietario/proponente | ✅ |
@@ -194,8 +195,8 @@ tesis-documental/
 |-------|-------------------------|--------|
 | `users` | id, username, email, password_hash, role, full_name, is_active | ✅ |
 | `user_keys` | user_id, public_key, encrypted_private_key, key_algorithm, key_fingerprint | ✅ |
-| `documents` | **+ `is_public`** | ✅ |
-| `document_versions` | **+ `coauthor_id`, `source_proposal_id`** | ✅ |
+| `documents` | **+ `is_public`, `share_mode`** ('all'/'latest'/'explicit') | ✅ |
+| `document_versions` | **+ `coauthor_id`, `source_proposal_id`, `is_public`** | ✅ |
 | `document_proposals` | estado `pending/accepted/rejected`, revisión, versión aceptada | ✅ |
 | `document_signatures` | **+ `signed_at`** explícito | ✅ |
 | `audit_log` | cadena de hashes + triggers append-only | ✅ |
@@ -277,7 +278,7 @@ pnpm db:seed           # poblar usuarios demo (admin/carlos/maria)
 pnpm db:seed-documents # sembrar 13 documentos de ejemplo (5 usuarios) en backend/
 pnpm db:reset          # migrar + sembrar desde cero
 pnpm exec tsx src/db/repair-paths.ts   # reparar rutas de archivos movidas (backend/)
-pnpm test              # backend: vitest (98 tests) · frontend: vitest (22 tests)
+pnpm test              # backend: vitest (100 tests) · frontend: vitest (22 tests)
 pnpm check             # (frontend) svelte-check
 ```
 
@@ -327,7 +328,42 @@ pnpm check             # (frontend) svelte-check
 
 ---
 
-## 12. Verificación de diagramas PlantUML
+## 13. Ronda de mejoras: compartición selectiva de versiones
+
+**Objetivo:** que el propietario de un documento decida **qué versiones** se exponen en el enlace público, y que los enlaces directos `/v/<id>/vN` de versiones no compartidas dejen de funcionar.
+
+### Implementado
+
+- **Modos de compartición** (`documents.share_mode`, migración `addColumnIfMissing` + `pnpm db:migrate`):
+  - `all` *(por defecto)* — todo el historial visible (comportamiento anterior, retrocompatible).
+  - `latest` — solo la versión actual.
+  - `explicit` — solo las versiones marcadas por el propietario.
+- **Bandera por versión** (`document_versions.is_public`, DEFAULT `0`): en modo `explicit` cuentan las marcadas con la API; en `all` se ignora.
+- **Backend** (`services/document.service.ts`):
+  - `setDocumentSharing(documentId, userId, {shareMode, versionIds})` — solo propietario; valida el modo y los `versionIds`; resetea `is_public` al entrar en `explicit`; registra auditoría `DOCUMENT_SHARING_CHANGED`.
+  - `getDocumentVersions` y `resolveVersionFile`: para visitantes anónimos filtran/validan versión a versión según el modo. `compareDocumentArtifacts` también respeta la compartición para no propietarios.
+  - Ruta `PATCH /api/docs/:id/sharing`; `fileErrorStatus` mapea el nuevo mensaje a `403`.
+- **Frontend**:
+  - `api.ts`: `setDocumentSharing(id, shareMode, versionIds?)` y campos `share_mode` / `is_public` en los tipos.
+  - `/documents/[id]`: nuevo panel **"Compartición de versiones"** con tres pills de modo y, en `explicit`, lista de versiones con checkbox compartida/oculta (optimistic, estados busy/error).
+  - `/v/[id]`: chip informativo ("Solo la versión actual" / "Versiones seleccionadas por el propietario") y estado vacío cuando no hay versiones compartidas.
+  - `/v/[id]/[version]`: si una versión no está compartida muestra *"La versión vN no está disponible públicamente en este momento"*.
+  - Auditoría: etiquetas `DOCUMENT_SHARING_CHANGED` y `DOCUMENT_VISIBILITY_CHANGED`.
+
+### Verificación
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| Backend (`vitest run`) | ✅ **12 archivos / 100 tests PASS** (nuevos: filtrado por modo, bloqueo de enlaces/descargas, extraño no puede configurar) |
+| Frontend (`vitest run`) | ✅ 2 archivos / 22 tests PASS |
+| `pnpm check` + `vite build` | ✅ 0 errores / 0 warnings · build OK |
+| E2E por API contra servidor real | ✅ doc público: `explicit` solo v1 → v1 `200`, v2 `403`, actual `403`; `latest` → solo v2 (`200`), v1 `403` |
+| UI (Chrome headless) | ✅ panel de compartición renderiza, pills cambian modo, toggles cambian `is_public` en BD y la vista pública se filtra en vivo |
+| Rutas headless completas | ✅ 15/15 OK (incl. `/v/<id>/v1` oculto muestra el aviso) |
+
+---
+
+## 14. Verificación de diagramas PlantUML
 
 **Objetivo:** que los **34** diagramas del repositorio (los 26 de `doc/06_diagramas_y_software/` y los 8 de [`08_fundamentos_ingenieria_software.md`](08_fundamentos_ingenieria_software.md)) se rendericen sin error en los dos visores públicos de referencia.
 

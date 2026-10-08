@@ -6,10 +6,10 @@
 </script>
 <svelte:head><title>Resumen | DocuTrust</title></svelte:head>
 <div class="dashboard">
-  <section class="welcome anim-rise"><div><span class="eyebrow">Panel de control</span><h1>Hola, {$auth.user?.username}</h1><p>Gestiona tus documentos y verifica su integridad desde un solo lugar.</p></div><div class="security"><span class="anim-ring-green">✓</span><div><strong>Cuenta protegida</strong><small>Claves RSA-2048 activas</small></div></div></section>
+  <section class="welcome anim-rise"><div><span class="eyebrow">Panel de control</span><h1>Hola, <span class="dt-grad-text">{$auth.user?.username}</span></h1><p>Gestiona tus documentos y verifica su integridad desde un solo lugar.</p></div><div class="security"><span class="anim-ring-green">✓</span><div><strong>Cuenta protegida</strong><small>Claves RSA-2048 activas</small></div></div></section>
   <section class="quick-grid stagger">
-    <a class="action-card purple" href="/documents"><span class="action-icon">▣</span><span><small>GESTIÓN DOCUMENTAL</small><strong>Mis documentos</strong><em>Versiona y firma archivos</em></span><b>→</b></a>
-    <a class="action-card blue" href="/verify"><span class="action-icon">⌕</span><span><small>VERIFICACIÓN PÚBLICA</small><strong>Verificar archivo</strong><em>Comprueba hash y firma</em></span><b>→</b></a>
+    <a class="action-card destiny" href="/documents"><span class="action-icon">▣</span><span><small>GESTIÓN DOCUMENTAL</small><strong>Mis documentos</strong><em>Versiona y firma archivos</em></span><b>→</b></a>
+    <a class="action-card sky" href="/verify"><span class="action-icon">⌕</span><span><small>VERIFICACIÓN PÚBLICA</small><strong>Verificar archivo</strong><em>Comprueba hash y firma</em></span><b>→</b></a>
     {#if $auth.user?.role === 'admin'}<a class="action-card amber" href="/audit"><span class="action-icon">≋</span><span><small>ADMINISTRACIÓN</small><strong>Auditoría</strong><em>Revisa la cadena de eventos</em></span><b>→</b></a>{/if}
   </section>
   <section class="collab-strip anim-rise d2">
@@ -22,5 +22,62 @@
   <section class="help anim-rise d5"><span>?</span><div><strong>¿Necesitas verificar un documento?</strong><p>La verificación pública no requiere cuenta y muestra el resultado del hash y la firma.</p></div><a href="/verify">Ir a verificar →</a></section>
 </div>
 <style>
-  .dashboard{padding:8px 0 30px}.eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#4f46e5;font-weight:800}.welcome{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:31px}.welcome h1{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.045em;color:#101b3d;margin:8px 0}.welcome p{color:#64748b}.security{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#ecfdf5;border:1px solid #bbf7d0;border-radius:12px;color:#047857}.security>span{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#d1fae5;font-weight:900}.security strong,.security small{display:block}.security strong{font-size:.78rem}.security small{font-size:.67rem;color:#059669;margin-top:3px}.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:25px}.action-card{display:flex;align-items:center;gap:14px;padding:21px 18px;border-radius:15px;text-decoration:none;border:1px solid transparent;transition:.18s}.action-card:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(30,41,59,.1)}.action-card>span:nth-child(2){flex:1}.action-card small,.action-card strong,.action-card em{display:block}.action-card small{font-size:.61rem;font-weight:800;letter-spacing:.08em;opacity:.7}.action-card strong{font-size:1rem;margin:6px 0 4px}.action-card em{font-size:.72rem;font-style:normal;opacity:.75}.action-card b{font-size:1.25rem}.action-icon{width:40px;height:40px;display:grid!important;place-items:center;border-radius:11px;font-size:1.25rem;font-weight:900}.purple{background:#eef2ff;color:#3730a3;border-color:#c7d2fe}.purple .action-icon{background:#e0e7ff}.blue{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.blue .action-icon{background:#dbeafe}.amber{background:#fffbeb;color:#92400e;border-color:#fde68a}.amber .action-icon{background:#fef3c7}.collab-strip{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:14px;margin-bottom:25px}.collab-label{display:flex;align-items:center;gap:12px;background:linear-gradient(150deg,#101b3d,#4f46e5);border-radius:15px;padding:16px 18px;color:#fff}.collab-label>span{width:38px;height:38px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.14);font-size:1.1rem}.collab-label small,.collab-label strong{display:block}.collab-label small{font-size:.58rem;letter-spacing:.14em;color:#a5b4fc;font-weight:800}.collab-label strong{font-size:.88rem;margin-top:4px}.collab-strip>a{background:#fff;border:1px solid #e1e7f0;border-radius:15px;padding:16px 16px;display:flex;flex-direction:column;gap:5px;text-decoration:none;transition:.18s}.collab-strip>a:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(30,41,59,.1);border-color:#c7d2fe}.collab-strip>a em{font-style:normal;font-size:.6rem;font-weight:800;letter-spacing:.1em;color:#818cf8}.collab-strip>a strong{font-size:.85rem;color:#17213a}.collab-strip>a b{margin-top:5px;color:#4f46e5;text-align:right}.progress-card{background:#fff;border:1px solid #e1e7f0;border-radius:16px;padding:25px 26px;box-shadow:0 8px 25px rgba(30,41,59,.045)}.section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.section-heading h2{font-size:1.25rem;color:#17213a;margin-top:7px}.complete{font-size:.72rem;color:#047857;background:#d1fae5;padding:7px 10px;border-radius:7px;font-weight:800}.progress{height:7px;background:#e8edf4;border-radius:8px;margin:23px 0}.progress span{display:block;width:100%;height:100%;border-radius:8px;background:linear-gradient(90deg,#6366f1,#10b981)}.milestones{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.milestones>div{display:flex;gap:8px;align-items:flex-start}.milestones i{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#d1fae5;color:#047857;font-size:.72rem;font-style:normal;font-weight:900}.milestones strong,.milestones small{display:block}.milestones strong{font-size:.76rem;color:#334155}.milestones small{font-size:.67rem;color:#94a3b8;margin-top:3px}.help{display:flex;align-items:center;gap:12px;margin-top:18px;padding:16px 18px;background:#f8fafc;border:1px solid #e5eaf2;border-radius:12px}.help>span{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#e0e7ff;color:#4338ca;font-weight:800}.help div{flex:1}.help strong{font-size:.8rem}.help p{font-size:.73rem;color:#64748b;margin-top:3px}.help a{font-size:.75rem;color:#4f46e5;font-weight:800;text-decoration:none}@media(max-width:760px){.welcome{align-items:flex-start;flex-direction:column}.quick-grid{grid-template-columns:1fr}.milestones{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.progress-card{padding:20px 17px}.help{align-items:flex-start;flex-wrap:wrap}.help a{margin-left:37px}.milestones{grid-template-columns:1fr 1fr}.milestones strong{font-size:.7rem}}
+  .dashboard{padding:8px 0 30px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#fff;color:var(--dt-pri);font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--dt-line2);box-shadow:0 6px 18px -8px rgba(109,92,255,.35)}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dt-grad);box-shadow:0 0 0 4px rgba(139,92,246,.16);animation:dtPulse 2.4s ease-out infinite}
+  .welcome{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:31px;padding:26px 28px;background:linear-gradient(120deg,#f6f5ff,#eef2ff);border:1px solid var(--dt-line);border-radius:22px;box-shadow:var(--dt-shadow)}
+  .welcome h1{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.045em;color:var(--dt-ink);margin:10px 0}
+  .welcome p{color:var(--dt-body)}
+  .security{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(255,255,255,.9);border:1px solid var(--dt-ok-line);border-radius:13px;color:#047857;box-shadow:var(--dt-shadow)}
+  .security>span{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--dt-grad);color:#fff;font-weight:900}
+  .security strong,.security small{display:block}
+  .security strong{font-size:.78rem}
+  .security small{font-size:.67rem;color:#059669;margin-top:3px}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:25px}
+  .action-card{display:flex;align-items:center;gap:14px;padding:21px 18px;border-radius:18px;text-decoration:none;border:1px solid var(--dt-line);transition:transform .2s,box-shadow .2s,border-color .2s}
+  .action-card:hover{transform:translateY(-3px);box-shadow:var(--dt-shadow-lg);border-color:#cdd6f2}
+  .action-card>span:nth-child(2){flex:1}
+  .action-card small,.action-card strong,.action-card em{display:block}
+  .action-card small{font-size:.6rem;font-weight:800;letter-spacing:.08em;opacity:.85}
+  .action-card strong{font-size:1rem;margin:6px 0 4px;color:var(--dt-ink)}
+  .action-card em{font-size:.72rem;font-style:normal;opacity:.8}
+  .action-card b{font-size:1.25rem}
+  .action-icon{width:42px;height:42px;display:grid!important;place-items:center;border-radius:13px;font-size:1.25rem;font-weight:900}
+  .destiny{background:linear-gradient(150deg,#f4f1ff,#eef2ff);color:#6d5cff;border-color:#dcd5fb}
+  .destiny .action-icon{background:#fff;box-shadow:0 6px 14px -6px rgba(109,92,255,.4)}
+  .sky{background:linear-gradient(150deg,#eff6ff,#e6f4fe);color:#2563eb;border-color:#bfdbfe}
+  .sky .action-icon{background:#fff;box-shadow:0 6px 14px -6px rgba(59,130,246,.4)}
+  .amber{background:linear-gradient(150deg,#fffbeb,#fef3c7);color:#b45309;border-color:#fde68a}
+  .amber .action-icon{background:#fff;box-shadow:0 6px 14px -6px rgba(245,158,11,.4)}
+  .collab-strip{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:14px;margin-bottom:25px}
+  .collab-label{display:flex;align-items:center;gap:12px;background:linear-gradient(150deg,#101b3d,#4f46e5 60%,#8b5cf6);border-radius:18px;padding:16px 18px;color:#fff;box-shadow:0 16px 34px -16px rgba(109,92,255,.55)}
+  .collab-label>span{width:38px;height:38px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.14);font-size:1.1rem}
+  .collab-label small,.collab-label strong{display:block}
+  .collab-label small{font-size:.58rem;letter-spacing:.14em;color:#c7d2fe;font-weight:800}
+  .collab-label strong{font-size:.88rem;margin-top:4px}
+  .collab-strip>a{background:#fff;border:1px solid var(--dt-line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:5px;text-decoration:none;transition:transform .2s,box-shadow .2s,border-color .2s}
+  .collab-strip>a:hover{transform:translateY(-3px);box-shadow:var(--dt-shadow-lg);border-color:#cdd6f2}
+  .collab-strip>a em{font-style:normal;font-size:.6rem;font-weight:800;letter-spacing:.1em;color:var(--dt-pri)}
+  .collab-strip>a strong{font-size:.85rem;color:var(--dt-ink)}
+  .collab-strip>a b{margin-top:5px;color:var(--dt-pri);text-align:right}
+  .progress-card{background:#fff;border:1px solid var(--dt-line);border-radius:20px;padding:25px 26px;box-shadow:var(--dt-shadow)}
+  .section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}
+  .section-heading h2{font-size:1.25rem;color:var(--dt-ink);margin-top:10px}
+  .complete{font-size:.72rem;color:#047857;background:var(--dt-ok-bg);border:1px solid var(--dt-ok-line);padding:7px 11px;border-radius:999px;font-weight:800}
+  .progress{height:8px;background:#e8edf4;border-radius:8px;margin:23px 0;overflow:hidden}
+  .progress span{display:block;width:100%;height:100%;border-radius:8px;background:var(--dt-grad-hot);box-shadow:0 0 12px rgba(168,85,247,.5)}
+  .milestones{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .milestones>div{display:flex;gap:9px;align-items:flex-start;padding:12px;background:#fafbff;border:1px solid var(--dt-line);border-radius:12px}
+  .milestones i{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--dt-grad);color:#fff;font-size:.72rem;font-style:normal;font-weight:900;flex:none}
+  .milestones strong,.milestones small{display:block}
+  .milestones strong{font-size:.76rem;color:#35415c}
+  .milestones small{font-size:.67rem;color:var(--dt-mute);margin-top:3px}
+  .help{display:flex;align-items:center;gap:12px;margin-top:18px;padding:17px 19px;background:linear-gradient(120deg,#f6f5ff,#fff);border:1px solid var(--dt-line);border-radius:16px;box-shadow:var(--dt-shadow)}
+  .help>span{width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--dt-grad-soft);color:var(--dt-pri);font-weight:800}
+  .help div{flex:1}
+  .help strong{font-size:.8rem;color:var(--dt-ink)}
+  .help p{font-size:.73rem;color:var(--dt-body);margin-top:3px}
+  .help a{font-size:.75rem;color:var(--dt-pri);font-weight:800;text-decoration:none}
+  @media(max-width:760px){.welcome{align-items:flex-start;flex-direction:column}.quick-grid{grid-template-columns:1fr}.milestones{grid-template-columns:repeat(2,1fr)}.collab-strip{grid-template-columns:1fr}}
+  @media(max-width:520px){.progress-card{padding:20px 17px}.help{align-items:flex-start;flex-wrap:wrap}.help a{margin-left:37px}.milestones{grid-template-columns:1fr 1fr}.milestones strong{font-size:.7rem}}
 </style>

@@ -63,6 +63,8 @@ interface Document {
   owner_id: string;
   owner_username: string;
   current_version: number;
+  is_public: number;
+  share_mode?: 'all' | 'latest' | 'explicit';
   created_at: string;
   updated_at: string;
 }
@@ -92,6 +94,7 @@ interface DocumentVersion {
   uploader_username: string;
   signer_username: string;
   signature_algorithm: string;
+  is_public?: number;
 }
 
 interface UploadResult {
@@ -380,6 +383,14 @@ class ApiClient {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isPublic })
+    });
+  }
+
+  async setDocumentSharing(id: string, shareMode: 'all' | 'latest' | 'explicit', versionIds?: string[]): Promise<ApiResponse<{ documentId: string; shareMode: string }>> {
+    return this.request(`/docs/${id}/sharing`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shareMode, versionIds })
     });
   }
 
